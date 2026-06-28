@@ -1,0 +1,479 @@
+{
+  "users": [
+    {
+      "id": "user_admin",
+      "email": "admin@shopnova.ng",
+      "password": "password123",
+      "role": "admin",
+      "firstName": "SHOPNOVA",
+      "lastName": "Admin",
+      "phone": "+234 801 000 0000",
+      "addresses": [],
+      "wishlist": [],
+      "cart": [],
+      "notifications": {
+        "orderUpdates": true,
+        "promotions": true,
+        "newArrivals": true,
+        "whatsapp": true,
+        "newsletters": true
+      }
+    },
+    {
+      "id": "user_customer",
+      "email": "customer@shopnova.ng",
+      "password": "password123",
+      "role": "customer",
+      "firstName": "Ada",
+      "lastName": "Okafor",
+      "phone": "+234 900 111 2222",
+      "addresses": [
+        {
+          "id": "addr_home",
+          "label": "Home Address",
+          "fullName": "Ada Okafor",
+          "phone": "+234 801 000 0000",
+          "address": "12 Admiralty Way",
+          "city": "Lagos",
+          "state": "Lagos",
+          "isDefault": true
+        }
+      ],
+      "wishlist": [
+        "iphone-15-pro-max-256gb",
+        "hp-elitebook-840-g8"
+      ],
+      "cart": [],
+      "notifications": {
+        "orderUpdates": true,
+        "promotions": true,
+        "newArrivals": true,
+        "whatsapp": true,
+        "newsletters": true
+      }
+    }
+  ],
+  "products": [
+    {
+      "id": "iphone-15-pro-max-256gb",
+      "name": "iPhone 15 Pro Max 256GB",
+      "brand": "Apple",
+      "category": "Phones",
+      "price": "₦1,340,000",
+      "oldPrice": "₦1,520,000",
+      "discount": "-12%",
+      "stock": 18,
+      "status": "Active",
+      "description": "iPhone 15 Pro Max 256GB from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": true,
+      "bestSeller": false
+    },
+    {
+      "id": "hp-elitebook-840-g8",
+      "name": "HP EliteBook 840 G8",
+      "brand": "HP",
+      "category": "Laptops",
+      "price": "₦620,000",
+      "oldPrice": "₦710,000",
+      "discount": "-20%",
+      "stock": 9,
+      "status": "Active",
+      "description": "HP EliteBook 840 G8 from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": true,
+      "bestSeller": false
+    },
+    {
+      "id": "iphone-14-pro-128gb",
+      "name": "iPhone 14 Pro 128GB",
+      "brand": "Apple",
+      "category": "Phones",
+      "price": "₦840,000",
+      "oldPrice": "₦920,000",
+      "discount": "-12%",
+      "stock": 14,
+      "status": "Active",
+      "description": "iPhone 14 Pro 128GB from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": true,
+      "bestSeller": false
+    },
+    {
+      "id": "tecno-camon-30",
+      "name": "Tecno Camon 30",
+      "brand": "Tecno",
+      "category": "Phones",
+      "price": "₦245,000",
+      "oldPrice": "₦280,000",
+      "discount": "-20%",
+      "stock": 24,
+      "status": "Active",
+      "description": "Tecno Camon 30 from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": true,
+      "bestSeller": true
+    },
+    {
+      "id": "iphone-14",
+      "name": "iPhone 14",
+      "brand": "Apple",
+      "category": "Phones",
+      "price": "₦780,000",
+      "oldPrice": "₦850,000",
+      "discount": "-20%",
+      "stock": 12,
+      "status": "Active",
+      "description": "iPhone 14 from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": true,
+      "bestSeller": false
+    },
+    {
+      "id": "samsung-galaxy-a55",
+      "name": "Samsung Galaxy A55",
+      "brand": "Samsung",
+      "category": "Phones",
+      "price": "₦365,000",
+      "oldPrice": "₦420,000",
+      "discount": "-20%",
+      "stock": 16,
+      "status": "Active",
+      "description": "Samsung Galaxy A55 from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": true,
+      "bestSeller": false
+    },
+    {
+      "id": "oraimo-earbuds",
+      "name": "Oraimo Earbuds",
+      "brand": "Oraimo",
+      "category": "Audio",
+      "price": "₦24,500",
+      "oldPrice": "₦32,000",
+      "discount": "-20%",
+      "stock": 30,
+      "status": "Active",
+      "description": "Oraimo Earbuds from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": false,
+      "bestSeller": false
+    },
+    {
+      "id": "hisense-43-smart-tv",
+      "name": "Hisense 43\" Smart TV",
+      "brand": "Hisense",
+      "category": "Smart TVs",
+      "price": "₦285,000",
+      "oldPrice": "₦340,000",
+      "discount": "-16%",
+      "stock": 6,
+      "status": "Active",
+      "description": "Hisense 43\" Smart TV from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": false,
+      "bestSeller": false
+    },
+    {
+      "id": "wireless-gaming-mouse",
+      "name": "Wireless Gaming Mouse",
+      "brand": "SHOPNOVA",
+      "category": "Gaming",
+      "price": "₦18,900",
+      "oldPrice": "₦25,000",
+      "discount": "-24%",
+      "stock": 22,
+      "status": "Active",
+      "description": "Wireless Gaming Mouse from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": false,
+      "bestSeller": false
+    },
+    {
+      "id": "oraimo-power-bank-30000mah",
+      "name": "Oraimo Power Bank 30000mAh",
+      "brand": "Oraimo",
+      "category": "Accessories",
+      "price": "₦31,500",
+      "oldPrice": "₦45,000",
+      "discount": "-30%",
+      "stock": 4,
+      "status": "Low Stock",
+      "description": "Oraimo Power Bank 30000mAh from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": true,
+      "bestSeller": false
+    },
+    {
+      "id": "anker-usb-c-cable",
+      "name": "Anker USB-C Cable",
+      "brand": "Anker",
+      "category": "Accessories",
+      "price": "₦9,500",
+      "oldPrice": "₦12,000",
+      "discount": "-20%",
+      "stock": 5,
+      "status": "Low Stock",
+      "description": "Anker USB-C Cable from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1615529328331-f8917597711f?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1615529328331-f8917597711f?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": true,
+      "bestSeller": true
+    },
+    {
+      "id": "jbl-tune-headphones",
+      "name": "JBL Tune Headphones",
+      "brand": "JBL",
+      "category": "Audio",
+      "price": "₦55,000",
+      "oldPrice": "₦75,000",
+      "discount": "-12%",
+      "stock": 21,
+      "status": "Active",
+      "description": "JBL Tune Headphones from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": false,
+      "bestSeller": true
+    },
+    {
+      "id": "noise-smart-watch",
+      "name": "Noise Smart Watch",
+      "brand": "Noise",
+      "category": "Smart Watches",
+      "price": "₦41,000",
+      "oldPrice": "₦55,000",
+      "discount": "-20%",
+      "stock": 6,
+      "status": "Active",
+      "description": "Noise Smart Watch from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": false,
+      "bestSeller": false
+    },
+    {
+      "id": "dell-monitor-27",
+      "name": "Dell Monitor 27\"",
+      "brand": "Dell",
+      "category": "Laptops",
+      "price": "₦180,000",
+      "oldPrice": "₦220,000",
+      "discount": "-18%",
+      "stock": 8,
+      "status": "Active",
+      "description": "Dell Monitor 27\" from the SHOPNOVA electronics catalog with secure checkout, fast delivery, and warranty support.",
+      "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=900&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=900&q=80"
+      ],
+      "featured": true,
+      "bestSeller": true
+    }
+  ],
+  "categories": [
+    {
+      "id": "phones",
+      "name": "Phones",
+      "featured": true
+    },
+    {
+      "id": "laptops",
+      "name": "Laptops",
+      "featured": true
+    },
+    {
+      "id": "accessories",
+      "name": "Accessories",
+      "featured": true
+    },
+    {
+      "id": "audio",
+      "name": "Audio",
+      "featured": false
+    },
+    {
+      "id": "gaming",
+      "name": "Gaming",
+      "featured": false
+    },
+    {
+      "id": "smart-tvs",
+      "name": "Smart TVs",
+      "featured": false
+    },
+    {
+      "id": "tablets",
+      "name": "Tablets",
+      "featured": false
+    },
+    {
+      "id": "smart-watches",
+      "name": "Smart Watches",
+      "featured": false
+    }
+  ],
+  "orders": [
+    {
+      "id": "SN776185",
+      "userId": "user_customer",
+      "customer": "Ada Okafor",
+      "items": [
+        {
+          "key": "samsung-galaxy-a55:Color-Blue|Storage-256GB",
+          "id": "samsung-galaxy-a55",
+          "name": "Samsung Galaxy A55",
+          "brand": "Samsung",
+          "price": "₦365,000",
+          "image": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80",
+          "options": {
+            "Color": "Blue",
+            "Storage": "256GB"
+          },
+          "quantity": 1
+        },
+        {
+          "key": "iphone-14-pro-128gb:",
+          "id": "iphone-14-pro-128gb",
+          "name": "iPhone 14 Pro 128GB",
+          "brand": "Apple",
+          "price": "₦840,000",
+          "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80",
+          "options": {},
+          "quantity": 1
+        }
+      ],
+      "status": "Processing",
+      "subtotal": "₦1,205,000",
+      "discount": "₦36,150",
+      "deliveryFee": "₦2,500",
+      "total": "₦1,171,350",
+      "date": "28 Jun 2026",
+      "deliveryAddress": "Home Address",
+      "paymentMethod": "Bank Transfer"
+    },
+    {
+      "id": "SN872056",
+      "userId": "user_customer",
+      "customer": "Ada Okafor",
+      "items": [
+        {
+          "productId": "iphone-14",
+          "name": "iPhone 14",
+          "price": "₦780,000",
+          "quantity": 1
+        }
+      ],
+      "status": "Processing",
+      "subtotal": "₦780,000",
+      "discount": "₦23,400",
+      "deliveryFee": "₦2,500",
+      "total": "₦759,100",
+      "date": "28 Jun 2026",
+      "deliveryAddress": "12 Admiralty Way, Lagos",
+      "paymentMethod": "Paystack Card"
+    },
+    {
+      "id": "SN082614",
+      "userId": "user_customer",
+      "customer": "Ada Okafor",
+      "items": [
+        {
+          "productId": "iphone-14",
+          "name": "iPhone 14",
+          "price": "₦780,000",
+          "quantity": 1
+        }
+      ],
+      "status": "Processing",
+      "subtotal": "₦780,000",
+      "discount": "₦23,400",
+      "deliveryFee": "₦2,500",
+      "total": "₦759,100",
+      "date": "28 Jun 2026",
+      "deliveryAddress": "12 Admiralty Way, Lagos",
+      "paymentMethod": "Paystack Card"
+    },
+    {
+      "id": "SN2088",
+      "userId": "user_customer",
+      "customer": "Ada Okafor",
+      "items": [
+        {
+          "productId": "hisense-43-smart-tv",
+          "name": "Samsung TV + 2 items",
+          "quantity": 1,
+          "price": "₦450,000"
+        }
+      ],
+      "status": "Processing",
+      "total": "₦450,000",
+      "date": "28 Jun 2026",
+      "deliveryAddress": "12 Admiralty Way, Lagos",
+      "paymentMethod": "Paystack Card"
+    }
+  ],
+  "coupons": [
+    {
+      "id": "coupon_nova10",
+      "code": "NOVA10",
+      "discount": 10,
+      "status": "Active",
+      "usage": 84
+    },
+    {
+      "id": "coupon_welcome5",
+      "code": "WELCOME5",
+      "discount": 5,
+      "status": "Active",
+      "usage": 126
+    }
+  ],
+  "settings": {
+    "storeName": "SHOPNOVA",
+    "supportEmail": "support@shopnova.ng",
+    "phone": "+234 801 000 0000",
+    "standardDelivery": "Free",
+    "expressDelivery": "₦2,500",
+    "sameDayDelivery": "₦5,000",
+    "primaryGateway": "Paystack",
+    "bankTransfer": true,
+    "payOnDelivery": true
+  }
+}

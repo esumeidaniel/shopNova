@@ -1,0 +1,27 @@
+.store-shell .product-detail,
+.store-shell .cart-page,
+.store-shell .checkout-page,
+.store-shell .orders-page,
+.store-shell .wishlist-page,
+.store-shell .profile-page {
+  padding-top: 34px;
+}
+
+.page-breadcrumb {
+  color: var(--muted, #71809a);
+  font-size: 14px;
+  font-weight: 700;
+  margin: 18px auto 0;
+  max-width: 1320px;
+  width: calc(100% - 72px);
+}
+
+.page-breadcrumb a {
+  color: var(--navy-deep, #071c46);
+}
+
+@media (max-width: 680px) {
+  .page-breadcrumb {
+    width: calc(100% - 32px);
+  }
+}
