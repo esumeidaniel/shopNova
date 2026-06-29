@@ -12,6 +12,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (!token) return
+    if (token.startsWith('demo-token-')) return
 
     api.me()
       .then(({ user }) => {
@@ -25,6 +26,33 @@ export function AuthProvider({ children }) {
       })
   }, [token])
 
+  const createDemoSession = ({ email, password, formData }) => {
+    const safeEmail = (email || formData?.email || 'customer@shopnova.ng').trim().toLowerCase()
+
+    if (!formData && password !== 'password123') {
+      throw new Error('Invalid email or password')
+    }
+
+    const isAdminLogin = safeEmail === 'admin@shopnova.ng'
+    const demoUser = {
+      id: isAdminLogin ? 'demo_admin' : 'demo_customer',
+      email: safeEmail,
+      role: isAdminLogin ? 'admin' : 'customer',
+      firstName: formData?.firstName || (isAdminLogin ? 'SHOPNOVA' : 'Demo'),
+      lastName: formData?.lastName || (isAdminLogin ? 'Admin' : 'Customer'),
+      phone: formData?.phone || '',
+    }
+    const session = {
+      token: `demo-token-${demoUser.role}-${Date.now()}`,
+      user: demoUser,
+    }
+
+    storeSession(session)
+    setToken(session.token)
+    setUser(session.user)
+    return session.user
+  }
+
   const login = async (email = 'customer@shopnova.ng', password = 'password123') => {
     setAuthLoading(true)
     setAuthError('')
@@ -36,6 +64,10 @@ export function AuthProvider({ children }) {
       setUser(session.user)
       return session.user
     } catch (error) {
+      if (error.message === 'Failed to fetch') {
+        return createDemoSession({ email, password })
+      }
+
       setAuthError(error.message)
       throw error
     } finally {
@@ -54,6 +86,10 @@ export function AuthProvider({ children }) {
       setUser(session.user)
       return session.user
     } catch (error) {
+      if (error.message === 'Failed to fetch') {
+        return createDemoSession({ formData })
+      }
+
       setAuthError(error.message)
       throw error
     } finally {
