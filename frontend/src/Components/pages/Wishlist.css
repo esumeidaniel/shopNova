@@ -237,15 +237,18 @@
 }
 
 .wishlist-body a,
+.wishlist-body button,
 .wishlist-empty a {
   align-items: center;
   border-radius: 8px;
+  border: 0;
   display: flex;
   font-weight: 900;
   justify-content: center;
 }
 
-.wishlist-body a {
+.wishlist-body a,
+.wishlist-body button {
   background: var(--amber, #f7a51b);
   color: #071c46;
   height: 34px;
@@ -383,7 +386,8 @@
     font-size: 15px;
   }
 
-  .wishlist-body a {
+  .wishlist-body a,
+  .wishlist-body button {
     font-size: 12px;
     height: 31px;
   }

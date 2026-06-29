@@ -24,7 +24,7 @@ function WishlistCard({ item }) {
                     {showDiscount && <span>{item.oldPrice}</span>}
                 </div>
                 <small>In Stock</small>
-                <Link to="/cart" onClick={() => addToCart(item.id)}>Add to Cart</Link>
+                <button type="button" onClick={() => addToCart(item.id)}>Add to Cart</button>
             </div>
         </article>
     )

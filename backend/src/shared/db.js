@@ -1,15 +1,54 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import mongoose from 'mongoose'
+import { connectMongo, mongoIsEnabled } from '../config/mongodb.js'
 import { initialData } from '../data/seedData.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const dataDir = join(__dirname, '..', '..', 'data')
 const dbPath = join(dataDir, 'db.json')
+const SHOPNOVA_DOCUMENT_ID = 'shopnova-store'
+
+const shopnovaDataSchema = new mongoose.Schema(
+  {
+    _id: { type: String, default: SHOPNOVA_DOCUMENT_ID },
+    data: { type: mongoose.Schema.Types.Mixed, required: true },
+  },
+  {
+    collection: 'shopnova_data',
+    minimize: false,
+    timestamps: true,
+  },
+)
+
+const ShopnovaData = mongoose.models.ShopnovaData || mongoose.model('ShopnovaData', shopnovaDataSchema)
+
+async function readJsonDb() {
+  return JSON.parse(await readFile(dbPath, 'utf8'))
+}
 
 export async function ensureDb() {
-  await mkdir(dataDir, { recursive: true })
+  if (mongoIsEnabled()) {
+    await connectMongo()
+    const existingData = await ShopnovaData.exists({ _id: SHOPNOVA_DOCUMENT_ID })
 
+    if (!existingData) {
+      let seed = initialData
+
+      try {
+        seed = await readJsonDb()
+      } catch {
+        seed = initialData
+      }
+
+      await ShopnovaData.create({ _id: SHOPNOVA_DOCUMENT_ID, data: seed })
+    }
+
+    return
+  }
+
+  await mkdir(dataDir, { recursive: true })
   try {
     await readFile(dbPath, 'utf8')
   } catch {
@@ -19,10 +58,26 @@ export async function ensureDb() {
 
 export async function getDb() {
   await ensureDb()
-  return JSON.parse(await readFile(dbPath, 'utf8'))
+
+  if (mongoIsEnabled()) {
+    const document = await ShopnovaData.findById(SHOPNOVA_DOCUMENT_ID).lean()
+    return document?.data || initialData
+  }
+
+  return readJsonDb()
 }
 
 export async function saveDb(data) {
+  if (mongoIsEnabled()) {
+    await connectMongo()
+    await ShopnovaData.findByIdAndUpdate(
+      SHOPNOVA_DOCUMENT_ID,
+      { $set: { data } },
+      { new: true, upsert: true },
+    )
+    return
+  }
+
   await mkdir(dataDir, { recursive: true })
   await writeFile(dbPath, JSON.stringify(data, null, 2))
 }

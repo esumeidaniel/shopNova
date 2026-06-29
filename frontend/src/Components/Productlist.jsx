@@ -24,7 +24,6 @@ function ListingCard({ product, onToast }) {
         event.stopPropagation()
         addToCart(product)
         onToast('Added to cart')
-        navigate('/cart')
     }
 
     return (

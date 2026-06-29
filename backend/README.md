@@ -20,6 +20,7 @@ backend/
 
     config/
       env.js
+      mongodb.js
 
     data/
       seedData.js
@@ -74,9 +75,13 @@ Creates the Express app, connects middleware, and mounts all API modules.
 
 Loads environment variables like the backend port and frontend URL.
 
+`config/mongodb.js`
+
+Connects to MongoDB when `MONGODB_URI` is set.
+
 `shared/db.js`
 
-Reads and writes the local JSON database at `backend/data/db.json`.
+Reads and writes app data. If `MONGODB_URI` is set, it stores the data in MongoDB. If not, it uses the local JSON database at `backend/data/db.json`.
 
 `shared/auth.js`
 
@@ -158,12 +163,16 @@ backend/.env
 Use `backend/.env.example` as the template, then add your real Cloudinary values:
 
 ```txt
+MONGODB_URI=mongodb+srv://username:password@cluster-name.xxxxx.mongodb.net/shopnova?retryWrites=true&w=majority
+
 CLOUDINARY_CLOUD_NAME=your_real_cloud_name
 CLOUDINARY_API_KEY=your_real_api_key
 CLOUDINARY_API_SECRET=your_real_api_secret
 ```
 
 Do not put real secrets in `.env.example`.
+
+If `MONGODB_URI` is empty, the backend will keep using `backend/data/db.json`. If `MONGODB_URI` has your real MongoDB Atlas connection string, the backend will seed MongoDB from the existing JSON data the first time it runs.
 
 ## Test Accounts
 

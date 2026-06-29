@@ -53,7 +53,6 @@ function ProductCard({ product, onToast }) {
           event.stopPropagation();
           addToCart(product);
           onToast('Added to cart');
-          navigate('/cart');
         }} aria-label={`Add ${product.name} to cart`}>Add to Cart</button>
       </div>
     </article>

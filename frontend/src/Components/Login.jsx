@@ -32,8 +32,8 @@ const Login = () => {
                     const password = event.currentTarget.elements.password.value
 
                     try {
-                        await login(email || 'customer@shopnova.ng', password || 'password123')
-                        navigate(location.state?.from || '/')
+                        const user = await login(email || 'customer@shopnova.ng', password || 'password123')
+                        navigate(location.state?.from || (user.role === 'admin' ? '/admin' : '/'))
                     } catch {
                         // The auth provider displays the backend error message.
                     }

@@ -2,6 +2,7 @@ import cors from 'cors'
 import express from 'express'
 import { join } from 'node:path'
 import { env } from './config/env.js'
+import { mongoStatus } from './config/mongodb.js'
 import adminRoutes from './modules/admin/admin.routes.js'
 import authRoutes from './modules/auth/auth.routes.js'
 import cartRoutes from './modules/cart/cart.routes.js'
@@ -41,7 +42,7 @@ app.use(express.json({ limit: '8mb' }))
 app.use('/uploads', express.static(join(process.cwd(), 'uploads')))
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, service: 'SHOPNOVA API' })
+  res.json({ ok: true, service: 'SHOPNOVA API', database: mongoStatus() })
 })
 
 app.use('/api/auth', authRoutes)

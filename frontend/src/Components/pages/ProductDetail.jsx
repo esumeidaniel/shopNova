@@ -53,9 +53,13 @@ function getProductSpecs(product) {
     return ['Storage: up to 256GB', 'Display: high-resolution screen', 'Warranty: 1 year']
 }
 
-function RelatedCard({ product }) {
+function RelatedCard({ product, onToast }) {
     const { addToCart, toggleWishlist } = useStore()
     const showDiscount = hasRealDiscount(product)
+    const handleAddToCart = () => {
+        addToCart(product)
+        onToast(`${product.name} added to cart`)
+    }
 
     return (
         <article className="pd-card">
@@ -72,7 +76,7 @@ function RelatedCard({ product }) {
                     {showDiscount && <span>{product.oldPrice}</span>}
                 </div>
                 <small>{product.stock > 0 ? 'In Stock' : 'Out of Stock'}</small>
-                <Link to="/cart" onClick={() => addToCart(product)}>Add to Cart</Link>
+                <button type="button" onClick={handleAddToCart}>Add to Cart</button>
             </div>
         </article>
     )
@@ -139,7 +143,6 @@ const ProductDetail = () => {
     const handleAddToCart = () => {
         addToCart(product.id, selectedOptions, quantity)
         showToast(`${product.name} added to cart`)
-        navigate('/cart')
     }
     const handleBuyNow = () => {
         addToCart(product.id, selectedOptions, quantity)
@@ -245,7 +248,7 @@ const ProductDetail = () => {
                     <h2>You May Also Like</h2>
                     <div className="pd-related-grid">
                         {relatedProducts.map((product) => (
-                            <RelatedCard key={product.id} product={product} />
+                            <RelatedCard key={product.id} product={product} onToast={showToast} />
                         ))}
                     </div>
                 </section>

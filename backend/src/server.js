@@ -6,4 +6,5 @@ await ensureDb()
 
 app.listen(env.port, () => {
   console.log(`SHOPNOVA API running at http://127.0.0.1:${env.port}`)
+  console.log(`Database: ${env.mongodbUri ? 'MongoDB' : 'local JSON file'}`)
 })
