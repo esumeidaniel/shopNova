@@ -66,6 +66,18 @@ const productRows = [
   ['Screen Guard', 'Apple', '₦9,500', '₦12,000', '-20%'],
 ]
 
+function productCategory(name) {
+  const lowerName = name.toLowerCase()
+  if (lowerName.includes('phone') || lowerName.includes('iphone') || lowerName.includes('samsung') || lowerName.includes('tecno') || lowerName.includes('infinix') || lowerName.includes('xiaomi')) return 'Phones'
+  if (lowerName.includes('laptop') || lowerName.includes('elitebook')) return 'Laptops'
+  if (lowerName.includes('earbuds') || lowerName.includes('airpods') || lowerName.includes('headphones')) return 'Audio'
+  if (lowerName.includes('watch')) return 'Smart Watches'
+  if (lowerName.includes('tv')) return 'Smart TVs'
+  if (lowerName.includes('ipad') || lowerName.includes('tablet')) return 'Tablets'
+  if (lowerName.includes('mouse')) return 'Gaming'
+  return 'Accessories'
+}
+
 export const productsById = Object.fromEntries(
   productRows.map(([name, brand, price, oldPrice, discount]) => [
     productSlug(name),
@@ -77,8 +89,28 @@ export const productsById = Object.fromEntries(
       oldPrice,
       discount,
       image: productImages[productSlug(name)] || fallbackImage,
+      images: [productImages[productSlug(name)] || fallbackImage],
+      category: productCategory(name),
+      stock: 15,
+      featured: true,
+      bestSeller: ['Tecno Camon 30', 'HP EliteBook 840 G8', 'Oraimo Power Bank 30000mAh', 'JBL Tune Headphones'].includes(name),
+      status: 'Active',
     },
   ]),
+)
+
+export const fallbackProducts = Object.values(productsById)
+
+export const fallbackCategories = Object.values(
+  fallbackProducts.reduce((categories, product) => {
+    categories[product.category] ||= {
+      id: productSlug(product.category),
+      name: product.category,
+      products: 0,
+    }
+    categories[product.category].products += 1
+    return categories
+  }, {}),
 )
 
 export function getProductById(id) {

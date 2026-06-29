@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../api';
 import heroProducts from '../assets/shopnova-hero-products.png';
-import { getProductImage } from '../productData';
+import { fallbackCategories, fallbackProducts, getProductImage } from '../productData';
 import { hasRealDiscount, visibleProducts } from '../productDisplay';
 import { useAuth } from '../useAuth';
 import { useStore } from '../useStore';
@@ -97,7 +97,11 @@ const Dashboard = () => {
         setProducts(visibleProducts(productData.products || []));
         setCategories(categoryData.categories || []);
       })
-      .catch((error) => setHomeError(error.message));
+      .catch(() => {
+        setProducts(visibleProducts(fallbackProducts));
+        setCategories(fallbackCategories);
+        setHomeError('');
+      });
   }, []);
 
   const showToast = (message) => {

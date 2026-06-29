@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api'
-import { getProductImage } from '../productData'
+import { fallbackCategories, fallbackProducts, getProductImage } from '../productData'
 import { hasRealDiscount, visibleProducts as filterVisibleProducts } from '../productDisplay'
 import { useStore } from '../useStore'
 import './Productlist.css'
@@ -61,6 +61,7 @@ const Productlist = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const selectedCategory = searchParams.get('category')
+    const searchKeyword = searchParams.get('search')?.toLowerCase()
     const query = searchParams.toString() ? `?${searchParams.toString()}` : ''
 
     useEffect(() => {
@@ -71,9 +72,20 @@ const Productlist = () => {
                 setProducts(filterVisibleProducts(productData.products || []))
                 setCategories(categoryData.categories || [])
             })
-            .catch((error) => setError(error.message))
+            .catch(() => {
+                const products = fallbackProducts.filter((product) => {
+                    const matchesCategory = selectedCategory ? product.category === selectedCategory : true
+                    const matchesSearch = searchKeyword
+                        ? [product.name, product.brand, product.category].join(' ').toLowerCase().includes(searchKeyword)
+                        : true
+                    return matchesCategory && matchesSearch
+                })
+                setProducts(filterVisibleProducts(products))
+                setCategories(fallbackCategories)
+                setError('')
+            })
             .finally(() => setLoading(false))
-    }, [query])
+    }, [query, searchKeyword, selectedCategory])
 
     const visibleProducts = products
     const showToast = (message) => {

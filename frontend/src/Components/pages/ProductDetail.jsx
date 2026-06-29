@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../../api'
-import { getProductById, getProductImage } from '../../productData'
+import { fallbackProducts, getProductById, getProductImage } from '../../productData'
 import { hasRealDiscount, visibleProducts } from '../../productDisplay'
 import { useStore } from '../../useStore'
 import './ProductDetail.css'
@@ -106,7 +106,10 @@ const ProductDetail = () => {
                     ...product,
                 })
             })
-            .catch((error) => setError(error.message))
+            .catch(() => {
+                setProduct(getProductById(id))
+                setError('')
+            })
             .finally(() => setLoading(false))
     }, [id])
 
@@ -125,7 +128,9 @@ const ProductDetail = () => {
             .then(({ products }) => {
                 setRelatedProducts(visibleProducts(products).filter((item) => item.id !== product.id).slice(0, 4))
             })
-            .catch(() => setRelatedProducts([]))
+            .catch(() => {
+                setRelatedProducts(visibleProducts(fallbackProducts).filter((item) => item.category === product.category && item.id !== product.id).slice(0, 4))
+            })
     }, [product.category, product.id])
     const showToast = (message) => {
         setToast(message)
