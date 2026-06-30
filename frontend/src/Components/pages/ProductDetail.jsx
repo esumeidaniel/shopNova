@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../../api'
-import { fallbackProducts, getProductById, getProductImage } from '../../productData'
+import { emptyProduct, fallbackProducts, getProductById, getProductImage } from '../../productData'
 import { hasRealDiscount, visibleProducts } from '../../productDisplay'
 import { useStore } from '../../useStore'
 import './ProductDetail.css'
 
 function getProductOptions(product) {
+    if (!product.name) return []
     const name = product.name.toLowerCase()
     if (name.includes('laptop') || name.includes('elitebook')) {
         return [
@@ -45,6 +46,7 @@ function getProductOptions(product) {
 }
 
 function getProductSpecs(product) {
+    if (!product.name) return []
     const name = product.name.toLowerCase()
     if (name.includes('laptop') || name.includes('elitebook')) return ['Processor: Intel Core i5/i7', 'Memory: up to 32GB RAM', 'Warranty: 1 year']
     if (name.includes('tv')) return ['Display: UHD Smart TV', 'Connectivity: HDMI, USB, Wi-Fi', 'Warranty: 1 year']
@@ -64,7 +66,7 @@ function RelatedCard({ product, onToast }) {
     return (
         <article className="pd-card">
             <div className="pd-card-media">
-                <img src={product.image || getProductImage(product.name)} alt={product.name} />
+                {product.image && <img src={product.image || getProductImage(product.name)} alt={product.name} />}
                 {showDiscount && <span>{product.discount}</span>}
                 <button aria-label={`Save ${product.name} to wishlist`} onClick={() => toggleWishlist(product)}>♡</button>
             </div>
@@ -93,7 +95,7 @@ const ProductDetail = () => {
     const [error, setError] = useState('')
     const optionGroups = useMemo(() => getProductOptions(product), [product])
     const specs = useMemo(() => getProductSpecs(product), [product])
-    const galleryImages = product.images?.length ? product.images : [product.image, getProductImage('USB-C Adapter'), getProductImage('AirPods Pro'), getProductImage('Dell Monitor 27"')]
+    const galleryImages = product.images?.length ? product.images : [product.image].filter(Boolean)
     const [selectedImage, setSelectedImage] = useState(product.image)
     const [quantity, setQuantity] = useState(1)
     const [selectedOptions, setSelectedOptions] = useState(() => Object.fromEntries(
@@ -111,14 +113,14 @@ const ProductDetail = () => {
                 })
             })
             .catch(() => {
-                setProduct(getProductById(id))
+                setProduct({ ...emptyProduct, id })
                 setError('')
             })
             .finally(() => setLoading(false))
     }, [id])
 
     useEffect(() => {
-        setSelectedImage(product.image)
+        setSelectedImage(product.image || '')
         setQuantity(1)
         setSelectedOptions(Object.fromEntries(
             optionGroups.map(([label, options]) => [label, options[1] || options[0]]),
@@ -141,12 +143,26 @@ const ProductDetail = () => {
         window.setTimeout(() => setToast(''), 1800)
     }
     const handleAddToCart = () => {
+        if (!product.id || !product.name) return
         addToCart(product.id, selectedOptions, quantity)
         showToast(`${product.name} added to cart`)
     }
     const handleBuyNow = () => {
+        if (!product.id || !product.name) return
         addToCart(product.id, selectedOptions, quantity)
         navigate('/checkout')
+    }
+
+    if (!loading && !product.name) {
+        return (
+            <main className="product-detail">
+                <section className="pd-details-panel">
+                    <h1>Product not found</h1>
+                    <p>This product is not available yet. Add products from the admin panel to make them appear in the store.</p>
+                    <Link to="/products">Back to products</Link>
+                </section>
+            </main>
+        )
     }
 
     return (
@@ -166,15 +182,17 @@ const ProductDetail = () => {
             <section className="pd-main">
                 <div className="pd-gallery">
                     <div className="pd-image">
-                        <img src={selectedImage} alt={product.name} />
+                        {selectedImage && <img src={selectedImage} alt={product.name} />}
                     </div>
-                    <div className="pd-thumbs">
-                        {galleryImages.map((image, index) => (
-                            <button className={selectedImage === image ? 'active' : ''} key={`${image}-${index}`} type="button" onClick={() => setSelectedImage(image)}>
-                                <img src={image} alt="" />
-                            </button>
-                        ))}
-                    </div>
+                    {galleryImages.length > 0 && (
+                        <div className="pd-thumbs">
+                            {galleryImages.map((image, index) => (
+                                <button className={selectedImage === image ? 'active' : ''} key={`${image}-${index}`} type="button" onClick={() => setSelectedImage(image)}>
+                                    <img src={image} alt="" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="pd-info">

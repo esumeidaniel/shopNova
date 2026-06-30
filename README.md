@@ -122,3 +122,30 @@ Cloudinary env vars
 Admin login token
 Running/deployed backend
 ```
+
+## Start With An Empty Catalog
+
+SHOPNOVA no longer ships customer-facing sample products. To clear old local or MongoDB sample data, run:
+
+```bash
+cd backend
+npm run clear:catalog
+```
+
+This clears:
+
+```txt
+products
+orders
+coupons
+carts
+wishlists
+```
+
+It keeps:
+
+```txt
+admin/customer test accounts
+electronics categories
+store settings
+```

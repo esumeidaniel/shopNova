@@ -31,7 +31,7 @@ function normalizeProduct(productInput) {
     ...getProductById(productInput.id),
     ...productInput,
   }
-  return getProductById(productSlug(productInput?.name || 'iPhone 15 Pro Max 256GB'))
+  return getProductById(productSlug(productInput?.name || ''))
 }
 
 function cartKey(productId, options = {}) {
@@ -66,12 +66,12 @@ export function StoreProvider({ children }) {
           try {
             return (await api.product(productId)).product
           } catch {
-            return getProductById(productId)
+            return null
           }
         }))
 
         setCartItems(cartData.cart || [])
-        setWishlistItems(wishlistProducts)
+        setWishlistItems(wishlistProducts.filter(Boolean))
         setRemoteLoaded(true)
       })
       .catch((error) => setStoreError(error.message))
@@ -97,6 +97,7 @@ export function StoreProvider({ children }) {
 
   const addToCart = (productInput, options = {}, quantity = 1) => {
     const product = normalizeProduct(productInput)
+    if (!product.id || !product.name) return
     const key = cartKey(product.id, options)
 
     setCartItems((items) => {
@@ -142,6 +143,7 @@ export function StoreProvider({ children }) {
 
   const toggleWishlist = (productInput) => {
     const product = normalizeProduct(productInput)
+    if (!product.id || !product.name) return false
     const exists = wishlistItems.some((item) => item.id === product.id)
 
     if (exists) {

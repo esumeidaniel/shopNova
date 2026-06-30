@@ -6,7 +6,8 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "node --watch src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "clear:catalog": "node src/scripts/clearCatalog.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
