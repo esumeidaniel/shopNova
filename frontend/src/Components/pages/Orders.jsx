@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../../api'
+import { getLocalOrders } from '../../orderStorage'
 import './Orders.css'
 
 const tabs = ['All', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returns']
@@ -21,7 +22,15 @@ const Orders = () => {
     useEffect(() => {
         api.orders()
             .then(({ orders }) => setOrders(orders))
-            .catch((error) => setError(error.message))
+            .catch((error) => {
+                const localOrders = getLocalOrders()
+                if (error.message === 'Failed to fetch' && localOrders.length > 0) {
+                    setOrders(localOrders)
+                    setError('')
+                    return
+                }
+                setError(error.message)
+            })
             .finally(() => setLoading(false))
     }, [])
 

@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../../api'
+import { saveLocalOrder } from '../../orderStorage'
 import { useStore } from '../../useStore'
 import './Checkout.css'
 
-const paymentMethods = ['Card via Paystack', 'Bank Transfer', 'Pay on Delivery', 'USSD']
+const paymentMethods = ['Pay on Delivery']
 const deliveryMethods = ['Standard free', 'Express ₦2,500', 'Same-day ₦5,000']
 
 const Checkout = () => {
@@ -16,6 +17,33 @@ const Checkout = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
+    const goToOrderSuccess = (order) => {
+        clearCart()
+        navigate('/order-success', {
+            state: {
+                orderId: order.id,
+                items: cartSummary.count,
+                total: order.total,
+                delivery: address,
+                payment,
+            },
+        })
+    }
+
+    const createLocalPayOnDeliveryOrder = () => saveLocalOrder({
+        id: `SN${Date.now().toString().slice(-6)}`,
+        items: cartItems,
+        status: 'Processing',
+        subtotal: cartSummary.formattedSubtotal,
+        discount: cartSummary.formattedDiscount,
+        deliveryFee: cartSummary.formattedDeliveryFee,
+        total: cartSummary.formattedTotal,
+        date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        deliveryAddress: address,
+        deliveryMethod: delivery,
+        paymentMethod: payment,
+    })
+
     const placeOrder = async () => {
         setLoading(true)
         setError('')
@@ -26,18 +54,16 @@ const Checkout = () => {
                 deliveryAddress: address,
                 paymentMethod: payment,
             })
-            clearCart()
-            navigate('/order-success', {
-                state: {
-                    orderId: order.id,
-                    items: cartSummary.count,
-                    total: order.total,
-                    delivery: address,
-                    payment,
-                },
-            })
+            goToOrderSuccess(order)
         } catch (error) {
-            setError(error.message)
+            if (error.message === 'Failed to fetch' && payment === 'Pay on Delivery') {
+                goToOrderSuccess(createLocalPayOnDeliveryOrder())
+                return
+            }
+
+            setError(error.message === 'Failed to fetch'
+                ? 'Could not reach the backend. Please make sure the backend is running or deployed.'
+                : error.message)
         } finally {
             setLoading(false)
         }

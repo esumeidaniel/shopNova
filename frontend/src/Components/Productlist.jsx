@@ -18,7 +18,6 @@ function ListingCard({ product, onToast }) {
         event.stopPropagation()
         const saved = toggleWishlist(product)
         onToast(saved ? `${product.name} saved to wishlist` : `${product.name} removed from wishlist`)
-        navigate('/wishlist')
     }
     const handleCart = (event) => {
         event.stopPropagation()

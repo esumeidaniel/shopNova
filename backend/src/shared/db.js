@@ -30,7 +30,9 @@ async function readJsonDb() {
 
 export async function ensureDb() {
   if (mongoIsEnabled()) {
-    await connectMongo()
+    const connected = await connectMongo()
+    if (!connected) return ensureJsonDb()
+
     const existingData = await ShopnovaData.exists({ _id: SHOPNOVA_DOCUMENT_ID })
 
     if (!existingData) {
@@ -48,6 +50,10 @@ export async function ensureDb() {
     return
   }
 
+  return ensureJsonDb()
+}
+
+async function ensureJsonDb() {
   await mkdir(dataDir, { recursive: true })
   try {
     await readFile(dbPath, 'utf8')
@@ -60,6 +66,9 @@ export async function getDb() {
   await ensureDb()
 
   if (mongoIsEnabled()) {
+    const connected = await connectMongo()
+    if (!connected) return readJsonDb()
+
     const document = await ShopnovaData.findById(SHOPNOVA_DOCUMENT_ID).lean()
     return document?.data || initialData
   }
@@ -69,7 +78,9 @@ export async function getDb() {
 
 export async function saveDb(data) {
   if (mongoIsEnabled()) {
-    await connectMongo()
+    const connected = await connectMongo()
+    if (!connected) return saveJsonDb(data)
+
     await ShopnovaData.findByIdAndUpdate(
       SHOPNOVA_DOCUMENT_ID,
       { $set: { data } },
@@ -78,6 +89,10 @@ export async function saveDb(data) {
     return
   }
 
+  return saveJsonDb(data)
+}
+
+async function saveJsonDb(data) {
   await mkdir(dataDir, { recursive: true })
   await writeFile(dbPath, JSON.stringify(data, null, 2))
 }

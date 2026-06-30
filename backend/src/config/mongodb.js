@@ -2,9 +2,10 @@ import mongoose from 'mongoose'
 import { env } from './env.js'
 
 let connectionPromise
+let connectionFailed = false
 
 export function mongoIsEnabled() {
-  return Boolean(env.mongodbUri?.trim())
+  return Boolean(env.mongodbUri?.trim()) && !connectionFailed
 }
 
 function validateMongoUri(uri) {
@@ -29,11 +30,19 @@ export async function connectMongo() {
     })
   }
 
-  await connectionPromise
-  return true
+  try {
+    await connectionPromise
+    return true
+  } catch (error) {
+    connectionFailed = true
+    connectionPromise = null
+    console.warn(`MongoDB unavailable, using local JSON database instead: ${error.message}`)
+    return false
+  }
 }
 
 export function mongoStatus() {
+  if (connectionFailed) return 'fallback-json'
   if (!mongoIsEnabled()) return 'disabled'
   if (mongoose.connection.readyState === 1) return 'connected'
   if (mongoose.connection.readyState === 2) return 'connecting'

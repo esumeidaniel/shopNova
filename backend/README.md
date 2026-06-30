@@ -81,7 +81,7 @@ Connects to MongoDB when `MONGODB_URI` is set.
 
 `shared/db.js`
 
-Reads and writes app data. If `MONGODB_URI` is set, it stores the data in MongoDB. If not, it uses the local JSON database at `backend/data/db.json`.
+Reads and writes app data. If `MONGODB_URI` is set and reachable, it stores the data in MongoDB. If MongoDB is empty or unreachable during local development, it uses the local JSON database at `backend/data/db.json`.
 
 `shared/auth.js`
 
@@ -173,6 +173,14 @@ CLOUDINARY_API_SECRET=your_real_api_secret
 Do not put real secrets in `.env.example`.
 
 If `MONGODB_URI` is empty, the backend will keep using `backend/data/db.json`. If `MONGODB_URI` has your real MongoDB Atlas connection string, the backend will seed MongoDB from the existing JSON data the first time it runs.
+
+If MongoDB Atlas says it cannot connect, open Atlas:
+
+```txt
+Network Access → Add IP Address
+```
+
+For local testing, add your current IP address. For production deployment, add the IP or outbound access rule required by the hosting provider. Until Atlas allows the connection, SHOPNOVA falls back to the local JSON database so the backend can still run.
 
 ## Test Accounts
 

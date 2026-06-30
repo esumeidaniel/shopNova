@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../../api'
+import { getLocalOrder } from '../../orderStorage'
 import './OrderDetails.css'
 
 const OrderDetails = () => {
@@ -12,7 +13,15 @@ const OrderDetails = () => {
   useEffect(() => {
     api.order(id)
       .then(({ order }) => setOrder(order))
-      .catch((error) => setError(error.message))
+      .catch((error) => {
+        const localOrder = getLocalOrder(id)
+        if (error.message === 'Failed to fetch' && localOrder) {
+          setOrder(localOrder)
+          setError('')
+          return
+        }
+        setError(error.message)
+      })
       .finally(() => setLoading(false))
   }, [id])
 
