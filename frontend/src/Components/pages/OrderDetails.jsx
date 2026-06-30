@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { api } from '../../api'
+import { allowDemoFallback, api } from '../../api'
 import { getLocalOrder } from '../../orderStorage'
 import './OrderDetails.css'
 
@@ -15,7 +15,7 @@ const OrderDetails = () => {
       .then(({ order }) => setOrder(order))
       .catch((error) => {
         const localOrder = getLocalOrder(id)
-        if (error.message === 'Failed to fetch' && localOrder) {
+        if (allowDemoFallback && error.message === 'Failed to fetch' && localOrder) {
           setOrder(localOrder)
           setError('')
           return

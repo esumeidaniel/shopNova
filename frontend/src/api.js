@@ -1,6 +1,10 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:4000/api'
+const explicitApiUrl = import.meta.env.VITE_API_URL
+const API_BASE_URL = explicitApiUrl || 'http://127.0.0.1:4000/api'
 const TOKEN_KEY = 'shopnova-token'
 const USER_KEY = 'shopnova-user'
+
+export const allowDemoFallback = import.meta.env.VITE_ENABLE_DEMO_FALLBACK === 'true'
+  || (!explicitApiUrl && window.location.hostname.endsWith('github.io'))
 
 export function getStoredToken() {
   return localStorage.getItem(TOKEN_KEY) || ''

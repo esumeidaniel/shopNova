@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { api, clearSession, getStoredToken, getStoredUser, storeSession } from './api'
+import { allowDemoFallback, api, clearSession, getStoredToken, getStoredUser, storeSession } from './api'
 import { AuthContext } from './authContext'
 
 export function AuthProvider({ children }) {
@@ -64,7 +64,7 @@ export function AuthProvider({ children }) {
       setUser(session.user)
       return session.user
     } catch (error) {
-      if (error.message === 'Failed to fetch') {
+      if (allowDemoFallback && error.message === 'Failed to fetch') {
         return createDemoSession({ email, password })
       }
 
@@ -86,7 +86,7 @@ export function AuthProvider({ children }) {
       setUser(session.user)
       return session.user
     } catch (error) {
-      if (error.message === 'Failed to fetch') {
+      if (allowDemoFallback && error.message === 'Failed to fetch') {
         return createDemoSession({ formData })
       }
 

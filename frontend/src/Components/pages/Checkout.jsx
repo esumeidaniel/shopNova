@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { api } from '../../api'
+import { allowDemoFallback, api } from '../../api'
 import { saveLocalOrder } from '../../orderStorage'
 import { useStore } from '../../useStore'
 import './Checkout.css'
@@ -21,10 +21,12 @@ const Checkout = () => {
         clearCart()
         navigate('/order-success', {
             state: {
+                order,
                 orderId: order.id,
                 items: cartSummary.count,
                 total: order.total,
                 delivery: address,
+                deliveryMethod: delivery,
                 payment,
             },
         })
@@ -56,7 +58,7 @@ const Checkout = () => {
             })
             goToOrderSuccess(order)
         } catch (error) {
-            if (error.message === 'Failed to fetch' && payment === 'Pay on Delivery') {
+            if (allowDemoFallback && error.message === 'Failed to fetch' && payment === 'Pay on Delivery') {
                 goToOrderSuccess(createLocalPayOnDeliveryOrder())
                 return
             }
@@ -152,7 +154,7 @@ const Checkout = () => {
                                         Payment: {payment}<br />
                                         Final Total: {cartSummary.formattedTotal}
                                     </p>
-                                    <button type="button" onClick={placeOrder} disabled={loading}>{loading ? 'Placing order...' : 'Place Order'}</button>
+                                    <button type="button" onClick={placeOrder} disabled={loading}>{loading ? 'Placing order...' : 'Confirm Pay on Delivery Order'}</button>
                                 </>
                             ) : (
                                 <>

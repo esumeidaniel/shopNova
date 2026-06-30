@@ -516,8 +516,7 @@
   margin: 8px 0 14px;
 }
 
-.pd-card-body button,
-.pd-card-body a {
+.pd-card-body button {
   align-items: center;
   background: var(--amber, #f7a51b);
   border: 0;
