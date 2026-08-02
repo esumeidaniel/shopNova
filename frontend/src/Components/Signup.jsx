@@ -1,10 +1,17 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { useAuth } from '../useAuth'
+import { api } from '../api'
 import './Signup.css'
 
 const Signup = () => {
     const navigate = useNavigate()
     const { authError, authLoading, register } = useAuth()
+    const [formError, setFormError] = useState('')
+    const [registeredEmail, setRegisteredEmail] = useState('')
+    const [verificationCode, setVerificationCode] = useState('')
+    const [verificationMessage, setVerificationMessage] = useState('')
+    const googleEnabled = false
 
     return (
         <main className="signup">
@@ -19,8 +26,35 @@ const Signup = () => {
                     <p>Join SHOPNOVA and start shopping.</p>
                 </div>
 
-                {authError && <p className="login-alert">{authError}</p>}
+                {(authError || formError) && <p className="login-alert">{authError || formError}</p>}
 
+                {registeredEmail ? (
+                    <form className="signup-form" onSubmit={async (event) => {
+                        event.preventDefault()
+                        setFormError('')
+                        try {
+                            const response = await api.verifyEmail({ email: registeredEmail, code: verificationCode })
+                            setVerificationMessage(response.message)
+                            navigate('/')
+                        } catch (error) {
+                            setFormError(error.message)
+                        }
+                    }}>
+                        <input value={registeredEmail} aria-label="Registered email" readOnly />
+                        <input value={verificationCode} onChange={(event) => setVerificationCode(event.target.value)} aria-label="Verification code" placeholder="6-digit verification code" />
+                        <button type="submit" className="signup-submit">Verify Email</button>
+                        <button type="button" className="signup-google" onClick={async () => {
+                            setFormError('')
+                            try {
+                                const response = await api.sendVerification({ email: registeredEmail })
+                                setVerificationMessage(response.message)
+                            } catch (error) {
+                                setFormError(error.message)
+                            }
+                        }}>Resend Code</button>
+                        {verificationMessage && <p>{verificationMessage}</p>}
+                    </form>
+                ) : (
                 <form className="signup-form" onSubmit={async (event) => {
                     event.preventDefault()
                     const firstName = event.currentTarget.elements.firstName.value.trim()
@@ -28,12 +62,25 @@ const Signup = () => {
                     const email = event.currentTarget.elements.email.value.trim()
                     const phone = event.currentTarget.elements.phone.value.trim()
                     const password = event.currentTarget.elements.password.value
+                    const confirmPassword = event.currentTarget.elements.confirmPassword.value
+                    const termsAccepted = event.currentTarget.elements.terms.checked
+
+                    setFormError('')
+                    if (password !== confirmPassword) {
+                        setFormError('Passwords do not match')
+                        return
+                    }
+                    if (!termsAccepted) {
+                        setFormError('Please agree to Terms and Privacy')
+                        return
+                    }
 
                     try {
-                        await register({ firstName, lastName, email, phone, password })
-                        navigate('/')
-                    } catch {
-                        // The auth provider displays the backend error message.
+                        const session = await register({ firstName, lastName, email, phone, password })
+                        setRegisteredEmail(session.user.email)
+                        setVerificationMessage(session.message || 'Account created. Check your email for a verification code.')
+                    } catch (error) {
+                        setFormError(error.message)
                     }
                 }}>
                     <input name="firstName" type="text" aria-label="First name" placeholder="First name" />
@@ -41,7 +88,7 @@ const Signup = () => {
                     <input name="email" type="email" aria-label="Email address" placeholder="Email address" />
                     <input name="phone" type="tel" aria-label="Phone number" placeholder="Phone number" />
                     <input name="password" type="password" aria-label="Password" placeholder="Password" />
-                    <input type="password" aria-label="Confirm password" placeholder="Confirm password" />
+                    <input name="confirmPassword" type="password" aria-label="Confirm password" placeholder="Confirm password" />
 
                     <div className="password-strength" aria-label="Password strength: Good">
                         <span />
@@ -49,7 +96,7 @@ const Signup = () => {
                     <p className="strength-text">Password strength: Good</p>
 
                     <label className="terms-row">
-                        <input type="checkbox" defaultChecked />
+                        <input name="terms" type="checkbox" defaultChecked />
                         I agree to Terms and Privacy
                     </label>
 
@@ -58,13 +105,17 @@ const Signup = () => {
                     </p>
                     <button type="submit" className="signup-submit" disabled={authLoading}>{authLoading ? 'Creating account...' : 'Create Account'}</button>
                 </form>
+                )}
 
-                <div className="signup-divider">or continue with</div>
-
-                <button className="signup-google" type="button">
-                    <span>G</span>
-                    Continue with Google
-                </button>
+                {googleEnabled && (
+                    <>
+                        <div className="signup-divider">or continue with</div>
+                        <button className="signup-google" type="button">
+                            <span>G</span>
+                            Continue with Google
+                        </button>
+                    </>
+                )}
             </section>
         </main>
     );

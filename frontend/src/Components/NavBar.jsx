@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import './NavBar.css'
 import { useAuth } from '../useAuth'
 import { useStore } from '../useStore'
+import { api } from '../api'
 
 const NavBar = () => {
     const navigate = useNavigate()
@@ -10,7 +11,9 @@ const NavBar = () => {
     const { isLoggedIn, userEmail, logout } = useAuth()
     const { cartSummary, wishlistItems } = useStore()
     const [mobileOpen, setMobileOpen] = useState(false)
+    const [publicSettings, setPublicSettings] = useState({})
     const menuRef = useRef(null)
+    const accountMenuRef = useRef(null)
 
     const protectedLink = (path) => (
         isLoggedIn ? { to: path } : { to: '/login', state: { from: path } }
@@ -49,13 +52,30 @@ const NavBar = () => {
     }
     const isActivePath = (path) => location.pathname === path || location.pathname.startsWith(`${path}/`)
     const protectedClass = (path) => (isActivePath(path) ? 'active' : undefined)
+    const showAnnouncement = location.pathname === '/' || location.pathname.startsWith('/products')
+
+    useEffect(() => {
+        api.publicSettings().then(({ settings }) => setPublicSettings(settings)).catch(() => {})
+    }, [])
+
+    useEffect(() => {
+        const closeAccountMenu = (event) => {
+            if (!accountMenuRef.current?.contains(event.target)) {
+                accountMenuRef.current?.removeAttribute('open')
+            }
+        }
+
+        document.addEventListener('mousedown', closeAccountMenu)
+        return () => document.removeEventListener('mousedown', closeAccountMenu)
+    }, [])
 
     return (
         <header className='navbar'>
+            {showAnnouncement && publicSettings.announcement && <div className="announcement-bar">{publicSettings.announcement}</div>}
             <div className="site-header">
                 <Link className="brand" to="/">
                     <span className="brand-mark">S</span>
-                    <span className="brand-title desktop-brand-title">SHOPNOVA</span>
+                    <span className="brand-title desktop-brand-title">{publicSettings.storeName || 'SHOPNOVA'}</span>
                     <span className="brand-title mobile-brand-title">{getPageLabel()}</span>
                 </Link>
 
@@ -75,7 +95,7 @@ const NavBar = () => {
                     <Link className={protectedClass('/wishlist')} {...protectedLink('/wishlist')}>Wishlist{wishlistItems.length > 0 && <span className="nav-count">{wishlistItems.length}</span>}</Link>
                     <Link className={protectedClass('/cart')} {...protectedLink('/cart')}>Cart{cartSummary.count > 0 && <span className="nav-count">{cartSummary.count}</span>}</Link>
                     {isLoggedIn ? (
-                        <details className="account-menu">
+                        <details className="account-menu" ref={accountMenuRef}>
                             <summary aria-label="Open account menu">
                                 <span className="account-avatar">{accountInitials}</span>
                             </summary>

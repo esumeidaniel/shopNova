@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { allowDemoFallback, api } from '../../api'
+import { allowDemoFallback, api, getStoredToken } from '../../api'
 import { getLocalOrder } from '../../orderStorage'
 import './OrderDetails.css'
 
@@ -27,6 +27,19 @@ const OrderDetails = () => {
 
   if (loading) return <main className="order-details-page"><h1>Loading order...</h1></main>
   if (error) return <main className="order-details-page"><h1>{error}</h1><Link to="/orders">Back to orders</Link></main>
+
+  const downloadInvoice = async () => {
+    const response = await fetch(api.invoiceUrl(id), {
+      headers: { Authorization: `Bearer ${getStoredToken()}` },
+    })
+    const blob = await response.blob()
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `shopnova-invoice-${id}.html`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <main className="order-details-page">
@@ -63,10 +76,10 @@ const OrderDetails = () => {
 
         <aside className="order-info-card">
           <h2>Delivery & Payment</h2>
-          <p><strong>Address:</strong> {order?.deliveryAddress || 'Home Address'}</p>
-          <p><strong>Payment:</strong> {order?.paymentMethod || 'Paystack Card'}</p>
+          <p><strong>Address:</strong> {typeof order?.deliveryAddress === 'object' ? `${order.deliveryAddress.address}, ${order.deliveryAddress.city}` : order?.deliveryAddress || 'Saved address'}</p>
+          <p><strong>Payment:</strong> {order?.paymentMethod || 'Pay on Delivery'}</p>
           <p><strong>Total:</strong> {order?.total || '₦0'}</p>
-          <button type="button">Download Invoice</button>
+          <button type="button" onClick={downloadInvoice}>Download Invoice</button>
         </aside>
       </section>
     </main>

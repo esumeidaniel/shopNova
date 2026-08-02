@@ -261,6 +261,20 @@
   width: 11px;
 }
 
+.pd-stock.out {
+  color: #d92d20;
+}
+
+.pd-stock.out span {
+  background: #d92d20;
+}
+
+.pd-purchase-actions button:disabled,
+.pd-card-body button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .pd-option-group,
 .pd-quantity {
   margin-bottom: 35px;

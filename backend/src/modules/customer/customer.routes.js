@@ -12,6 +12,7 @@ import {
   removeWishlistItem,
   updateAddress,
   updateCart,
+  updatePassword,
   updateProfile,
 } from './customer.controller.js'
 
@@ -21,6 +22,7 @@ router.use(requireLogin)
 
 router.get('/profile', getProfile)
 router.put('/profile', updateProfile)
+router.patch('/password', updatePassword)
 router.get('/addresses', listAddresses)
 router.post('/addresses', createAddress)
 router.patch('/addresses/:id', updateAddress)

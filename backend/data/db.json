@@ -3,7 +3,7 @@
     {
       "id": "user_admin",
       "email": "admin@shopnova.ng",
-      "password": "password123",
+      "password": "$2a$10$daBMtAW3krm.pyi8jnALn.qp6Puat1D.J829EZm/KoZqe8IJfgXM6",
       "role": "admin",
       "firstName": "SHOPNOVA",
       "lastName": "Admin",
@@ -17,84 +17,15 @@
         "newArrivals": true,
         "whatsapp": true,
         "newsletters": true
-      }
-    },
-    {
-      "id": "user_customer",
-      "email": "customer@shopnova.ng",
-      "password": "password123",
-      "role": "customer",
-      "firstName": "Ada",
-      "lastName": "Okafor",
-      "phone": "+234 900 111 2222",
-      "addresses": [
-        {
-          "id": "addr_home",
-          "label": "Home Address",
-          "fullName": "Ada Okafor",
-          "phone": "+234 801 000 0000",
-          "address": "12 Admiralty Way",
-          "city": "Lagos",
-          "state": "Lagos",
-          "isDefault": true
-        }
-      ],
-      "wishlist": [],
-      "cart": [],
-      "notifications": {
-        "orderUpdates": true,
-        "promotions": true,
-        "newArrivals": true,
-        "whatsapp": true,
-        "newsletters": true
-      }
+      },
+      "emailVerified": true
     }
   ],
   "products": [],
-  "categories": [
-    {
-      "id": "phones",
-      "name": "Phones",
-      "featured": true
-    },
-    {
-      "id": "laptops",
-      "name": "Laptops",
-      "featured": true
-    },
-    {
-      "id": "accessories",
-      "name": "Accessories",
-      "featured": true
-    },
-    {
-      "id": "audio",
-      "name": "Audio",
-      "featured": false
-    },
-    {
-      "id": "gaming",
-      "name": "Gaming",
-      "featured": false
-    },
-    {
-      "id": "smart-tvs",
-      "name": "Smart TVs",
-      "featured": false
-    },
-    {
-      "id": "tablets",
-      "name": "Tablets",
-      "featured": false
-    },
-    {
-      "id": "smart-watches",
-      "name": "Smart Watches",
-      "featured": false
-    }
-  ],
+  "categories": [],
   "orders": [],
   "coupons": [],
+  "messages": [],
   "settings": {
     "storeName": "SHOPNOVA",
     "supportEmail": "support@shopnova.ng",

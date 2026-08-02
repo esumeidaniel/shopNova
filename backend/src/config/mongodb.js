@@ -36,6 +36,10 @@ export async function connectMongo() {
   } catch (error) {
     connectionFailed = true
     connectionPromise = null
+    if (env.isProduction) {
+      throw error
+    }
+
     console.warn(`MongoDB unavailable, using local JSON database instead: ${error.message}`)
     return false
   }

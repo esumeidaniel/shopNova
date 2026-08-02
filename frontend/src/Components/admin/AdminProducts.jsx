@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api'
+import { AdminToast, ConfirmModal, FormModal } from './AdminUi'
 
 const emptyProduct = {
   name: '',
   brand: 'SHOPNOVA',
-  category: 'Phones',
+  category: '',
   price: '',
   oldPrice: '',
   discount: '',
@@ -17,57 +18,192 @@ const emptyProduct = {
   bestSeller: false,
 }
 
+function ProductForm({ product, categories, imageName, saving, uploading, onChange, onImageChange, onSubmit, submitLabel }) {
+  return (
+    <form className="admin-product-form" onSubmit={onSubmit}>
+      <label className="admin-image-upload">
+        <input type="file" accept="image/*" onChange={onImageChange} disabled={uploading} />
+        {product.image ? (
+          <img src={product.image} alt="Selected product preview" />
+        ) : (
+          <span>
+            <strong>{uploading ? 'Uploading image...' : 'Upload product image'}</strong>
+            <small>PNG, JPG, or WEBP</small>
+          </span>
+        )}
+      </label>
+
+      <div className="admin-product-fields">
+        <label>
+          Product name
+          <input value={product.name} onChange={(event) => onChange('name', event.target.value)} placeholder="Product name" required />
+        </label>
+        <label>
+          Brand
+          <input value={product.brand} onChange={(event) => onChange('brand', event.target.value)} placeholder="Brand" />
+        </label>
+        <label>
+          Category
+          <select value={product.category} onChange={(event) => onChange('category', event.target.value)} required>
+            <option value="">Select category</option>
+            {categories.map((category) => (
+              <option key={category.id || category.name} value={category.name}>{category.name}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Price
+          <input value={product.price} onChange={(event) => onChange('price', event.target.value)} placeholder="₦245,000" required />
+        </label>
+        <label>
+          Old price
+          <input value={product.oldPrice} onChange={(event) => onChange('oldPrice', event.target.value)} placeholder="Optional" />
+        </label>
+        <label>
+          Discount badge
+          <input value={product.discount} onChange={(event) => onChange('discount', event.target.value)} placeholder="Optional" />
+        </label>
+        <label>
+          Stock quantity
+          <input min="0" type="number" value={product.stock} onChange={(event) => onChange('stock', event.target.value)} required />
+        </label>
+        <label>
+          Status
+          <select value={product.status} onChange={(event) => onChange('status', event.target.value)}>
+            <option>Active</option>
+            <option>Inactive</option>
+            <option>Draft</option>
+            <option>Out of Stock</option>
+          </select>
+        </label>
+        <label className="admin-wide-field">
+          Description
+          <textarea value={product.description} onChange={(event) => onChange('description', event.target.value)} placeholder="Short product description" />
+        </label>
+        <div className="admin-product-flags">
+          <label>
+            <input checked={product.featured} type="checkbox" onChange={(event) => onChange('featured', event.target.checked)} />
+            Show in Featured Products
+          </label>
+          <label>
+            <input checked={product.bestSeller} type="checkbox" onChange={(event) => onChange('bestSeller', event.target.checked)} />
+            Show in Best Sellers
+          </label>
+        </div>
+        <div className="admin-form-actions">
+          <p>{imageName || 'No new image selected'}</p>
+          <button className="admin-primary-action" type="submit" disabled={saving || uploading}>
+            {saving ? 'Saving...' : submitLabel}
+          </button>
+        </div>
+      </div>
+    </form>
+  )
+}
+
 const AdminProducts = () => {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
-  const [isAdding, setIsAdding] = useState(false)
-  const [newProduct, setNewProduct] = useState(emptyProduct)
+  const [formProduct, setFormProduct] = useState(emptyProduct)
   const [imageName, setImageName] = useState('')
   const [editingId, setEditingId] = useState('')
+  const [formOpen, setFormOpen] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [message, setMessage] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [toast, setToast] = useState({ message: '', type: 'success' })
 
-  const updateProduct = (field, value) => {
-    setNewProduct((product) => ({ ...product, [field]: value }))
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type })
+    window.setTimeout(() => setToast({ message: '', type }), 2200)
+  }
+
+  const loadProducts = () => {
+    setLoading(true)
+    Promise.all([api.products(), api.productCategories()])
+      .then(([productData, categoryData]) => {
+        setProducts(productData.products || [])
+        setCategories(categoryData.categories || [])
+      })
+      .catch((error) => showToast(error.message, 'error'))
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => {
-    Promise.all([api.products(), api.productCategories()])
-      .then(([productData, categoryData]) => {
-        setProducts(productData.products)
-        setCategories(categoryData.categories || [])
-      })
-      .catch((error) => setMessage(error.message))
-      .finally(() => setLoading(false))
+    loadProducts()
   }, [])
 
-  const handleImageChange = (event) => {
+  const resetForm = () => {
+    setFormProduct(emptyProduct)
+    setImageName('')
+    setEditingId('')
+    setFormOpen(false)
+  }
+
+  const openAddModal = () => {
+    setEditingId('')
+    setImageName('')
+    setFormProduct({ ...emptyProduct, category: categories[0]?.name || '' })
+    setFormOpen(true)
+  }
+
+  const openEditModal = (product) => {
+    setEditingId(product.id)
+    setImageName('')
+    setFormProduct({
+      name: product.name || '',
+      brand: product.brand || 'SHOPNOVA',
+      category: product.category || '',
+      price: product.price || '',
+      oldPrice: product.oldPrice || '',
+      discount: product.discount || '',
+      stock: String(product.stock ?? ''),
+      status: product.status || 'Active',
+      description: product.description || '',
+      image: product.image || '',
+      imagePublicId: product.imagePublicId || '',
+      featured: Boolean(product.featured),
+      bestSeller: Boolean(product.bestSeller),
+    })
+    setFormOpen(true)
+  }
+
+  const updateProduct = (field, value) => {
+    setFormProduct((product) => ({ ...product, [field]: value }))
+  }
+
+  const handleImageChange = async (event) => {
     const file = event.target.files?.[0]
     if (!file) return
 
+    setUploading(true)
     setImageName(file.name)
     const formData = new FormData()
     formData.append('image', file)
 
-    api.uploadProductImage(formData)
-      .then(({ image, publicId }) => {
-        setNewProduct((product) => ({ ...product, image, imagePublicId: publicId }))
-      })
-      .catch((error) => setMessage(error.message))
+    try {
+      const { image, publicId } = await api.uploadProductImage(formData)
+      setFormProduct((product) => ({ ...product, image, imagePublicId: publicId }))
+      showToast('Image uploaded')
+    } catch (error) {
+      showToast(error.message, 'error')
+    } finally {
+      setUploading(false)
+    }
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-
-    if (!newProduct.name || !newProduct.price || !newProduct.stock) return
+    setSaving(true)
 
     try {
       const payload = {
-        ...newProduct,
-        stock: Number(newProduct.stock),
-        featured: Boolean(newProduct.featured),
-        bestSeller: Boolean(newProduct.bestSeller),
-        status: Number(newProduct.stock) <= 5 ? 'Low Stock' : newProduct.status,
+        ...formProduct,
+        stock: Number(formProduct.stock),
+        featured: Boolean(formProduct.featured),
+        bestSeller: Boolean(formProduct.bestSeller),
       }
       const result = editingId
         ? await api.updateProduct(editingId, payload)
@@ -78,188 +214,113 @@ const AdminProducts = () => {
           ? currentProducts.map((product) => (product.id === result.product.id ? result.product : product))
           : [result.product, ...currentProducts]
       ))
-      setMessage(editingId ? 'Product updated' : 'Product saved')
-      setNewProduct(emptyProduct)
-      setImageName('')
-      setEditingId('')
-      setIsAdding(false)
+      showToast(editingId ? 'Product updated' : 'Product saved')
+      resetForm()
     } catch (error) {
-      setMessage(error.message)
+      showToast(error.message, 'error')
+    } finally {
+      setSaving(false)
     }
   }
 
-  const startEdit = (product) => {
-    setEditingId(product.id)
-    setNewProduct({
-      name: product.name,
-      brand: product.brand || 'SHOPNOVA',
-      category: product.category,
-      price: product.price,
-      oldPrice: product.oldPrice || product.price,
-      discount: product.discount || '',
-      stock: String(product.stock),
-      status: product.status,
-      description: product.description || '',
-      image: product.image || '',
-      imagePublicId: product.imagePublicId || '',
-      featured: Boolean(product.featured),
-      bestSeller: Boolean(product.bestSeller),
-    })
-    setIsAdding(true)
-  }
-
-  const handleDelete = async (product) => {
-    if (!window.confirm(`Delete ${product.name}?`)) return
+  const handleDelete = async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
 
     try {
-      await api.deleteProduct(product.id)
-      setProducts((currentProducts) => currentProducts.filter((item) => item.id !== product.id))
-      setMessage('Product deleted')
+      await api.deleteProduct(deleteTarget.id)
+      setProducts((currentProducts) => currentProducts.filter((item) => item.id !== deleteTarget.id))
+      setDeleteTarget(null)
+      showToast('Product deleted')
     } catch (error) {
-      setMessage(error.message)
+      showToast(error.message, 'error')
+    } finally {
+      setDeleting(false)
     }
   }
 
   return (
     <section className="admin-page">
-      <div className="admin-page-heading">
-        <div>
-          <h2>Products</h2>
-          <p>Add, edit, price, publish, and manage electronics products.</p>
-        </div>
-        <button className="admin-primary-action" type="button" onClick={() => setIsAdding((open) => !open)}>
-          {isAdding ? 'Close Form' : 'Add Product'}
-        </button>
-      </div>
-
-      {isAdding && (
-        <article className="admin-panel admin-product-form-panel">
-          <div>
-            <h3>{editingId ? 'Edit Product' : 'Add New Product'}</h3>
-            <p>Upload the product image and enter the product details customers will see.</p>
-          </div>
-
-          <form className="admin-product-form" onSubmit={handleSubmit}>
-            <label className="admin-image-upload">
-              <input type="file" accept="image/*" onChange={handleImageChange} />
-              {newProduct.image ? (
-                <img src={newProduct.image} alt="Selected product preview" />
-              ) : (
-                <span>
-                  <strong>Upload product image</strong>
-                  <small>PNG, JPG, or WEBP</small>
-                </span>
-              )}
-            </label>
-
-            <div className="admin-product-fields">
-              <label>
-                Product name
-                <input value={newProduct.name} onChange={(event) => updateProduct('name', event.target.value)} placeholder="e.g. Samsung Galaxy A55" />
-              </label>
-              <label>
-                Brand
-                <input value={newProduct.brand} onChange={(event) => updateProduct('brand', event.target.value)} placeholder="e.g. Samsung" />
-              </label>
-              <label>
-                Category
-                <select value={newProduct.category} onChange={(event) => updateProduct('category', event.target.value)}>
-                  {categories.map((category) => (
-                    <option key={category.id || category.name}>{category.name}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Price
-                <input value={newProduct.price} onChange={(event) => updateProduct('price', event.target.value)} placeholder="₦245,000" />
-              </label>
-              <label>
-                Old price
-                <input value={newProduct.oldPrice} onChange={(event) => updateProduct('oldPrice', event.target.value)} placeholder="₦280,000" />
-              </label>
-              <label>
-                Discount badge
-                <input value={newProduct.discount} onChange={(event) => updateProduct('discount', event.target.value)} placeholder="-20%" />
-              </label>
-              <label>
-                Stock quantity
-                <input min="0" type="number" value={newProduct.stock} onChange={(event) => updateProduct('stock', event.target.value)} placeholder="25" />
-              </label>
-              <label>
-                Status
-                <select value={newProduct.status} onChange={(event) => updateProduct('status', event.target.value)}>
-                  <option>Active</option>
-                  <option>Draft</option>
-                  <option>Low Stock</option>
-                </select>
-              </label>
-              <label className="admin-wide-field">
-                Description
-                <textarea value={newProduct.description} onChange={(event) => updateProduct('description', event.target.value)} placeholder="Short product description" />
-              </label>
-              <div className="admin-product-flags">
-                <label>
-                  <input checked={newProduct.featured} type="checkbox" onChange={(event) => updateProduct('featured', event.target.checked)} />
-                  Show in Featured Products
-                </label>
-                <label>
-                  <input checked={newProduct.bestSeller} type="checkbox" onChange={(event) => updateProduct('bestSeller', event.target.checked)} />
-                  Show in Best Sellers
-                </label>
-              </div>
-              <div className="admin-form-actions">
-                <p>{imageName || 'No image selected yet'}</p>
-                <button className="admin-primary-action" type="submit">{editingId ? 'Update Product' : 'Save Product'}</button>
-              </div>
-            </div>
-          </form>
-        </article>
-      )}
+      <AdminToast message={toast.message} type={toast.type} />
 
       <article className="admin-panel">
-        {message && <p>{message}</p>}
         <div className="admin-panel-heading">
           <h3>Product Catalog</h3>
-          <input className="admin-search" aria-label="Search products" placeholder="Search products" />
+          <div className="admin-header-actions">
+            <input className="admin-search" aria-label="Search products" placeholder="Search products" />
+            <button className="admin-primary-action" type="button" onClick={openAddModal}>Add Product</button>
+          </div>
         </div>
         {loading && <p>Loading products...</p>}
-        <div className="admin-table-wrap">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Discount</th>
-                <th>Stock</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product.name}>
-                  <td>
-                    <div className="admin-product-cell">
-                      {product.image ? <img src={product.image} alt={product.name} /> : <span />}
-                      <strong>{product.name}</strong>
-                    </div>
-                  </td>
-                  <td>{product.category}</td>
-                  <td>{product.price}</td>
-                  <td>{product.discount}</td>
-                  <td>{product.stock}</td>
-                  <td><span className={`admin-chip ${product.status === 'Low Stock' ? 'warning' : 'active'}`}>{product.status}</span></td>
-                  <td>
-                    <button className="admin-table-action" type="button" onClick={() => startEdit(product)}>Edit</button>
-                    <button className="admin-table-action" type="button" onClick={() => handleDelete(product)}>Delete</button>
-                  </td>
+        {!loading && products.length === 0 && (
+          <div className="admin-empty-state">
+            <h3>No products yet</h3>
+            <p>Add your first product to start selling on SHOPNOVA.</p>
+
+          </div>
+        )}
+        {products.length > 0 && (
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Status</th>
+                  <th>Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {products.map((product) => (
+                  <tr key={product.id}>
+                    <td>
+                      <div className="admin-product-cell">
+                        {product.image ? <img src={product.image} alt={product.name} /> : <span />}
+                        <strong>{product.name}</strong>
+                      </div>
+                    </td>
+                    <td>{product.category || 'Uncategorized'}</td>
+                    <td>{product.price}</td>
+                    <td>{product.stock}</td>
+                    <td><span className={`admin-chip ${String(product.status).toLowerCase().replaceAll(' ', '-')}`}>{product.status}</span></td>
+                    <td>
+                      <div className="admin-action-row">
+                        <button className="admin-table-action" type="button" onClick={() => openEditModal(product)}>Edit</button>
+                        <button className="admin-table-action danger" type="button" onClick={() => setDeleteTarget(product)}>Delete</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </article>
+
+      <FormModal open={formOpen} title={editingId ? 'Edit Product' : 'Add Product'} onClose={resetForm}>
+        <ProductForm
+          product={formProduct}
+          categories={categories}
+          imageName={imageName}
+          saving={saving}
+          uploading={uploading}
+          onChange={updateProduct}
+          onImageChange={handleImageChange}
+          onSubmit={handleSubmit}
+          submitLabel={editingId ? 'Save Changes' : 'Save Product'}
+        />
+      </FormModal>
+
+      <ConfirmModal
+        open={Boolean(deleteTarget)}
+        title="Delete this product?"
+        message="This action cannot be undone."
+        loading={deleting}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+      />
     </section>
   )
 }

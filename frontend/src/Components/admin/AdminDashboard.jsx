@@ -18,19 +18,19 @@ const AdminDashboard = () => {
       ['Total Orders', dashboard.stats.totalOrders],
       ['Pending Orders', dashboard.stats.pendingOrders],
       ['Low Stock Items', dashboard.stats.lowStockItems],
+      ['Products', dashboard.stats.totalProducts],
+      ['Customers', dashboard.stats.totalCustomers],
     ]
     : []
   const lowStock = dashboard?.lowStock || []
   const recentOrders = dashboard?.recentOrders || []
+  const salesChart = dashboard?.salesChart || []
+  const maxSales = Math.max(...salesChart.map((day) => day.sales), 1)
 
   return (
     <section className="admin-page">
-      <div className="admin-page-heading">
-        <div>
-          <h2>Dashboard</h2>
-          <p>Store performance, recent orders, and stock alerts.</p>
-        </div>
-        <Link className="admin-primary-action" to="/admin/products">Add Product</Link>
+      <div className="admin-section-header">
+        <h2>Dashboard</h2>
       </div>
 
       <div className="admin-stats-grid">
@@ -38,7 +38,6 @@ const AdminDashboard = () => {
           <article className="admin-stat-card" key={label}>
             <p>{label}</p>
             <strong>{value}</strong>
-            <span>Live API</span>
           </article>
         ))}
         {error && <article className="admin-stat-card"><p>{error}</p></article>}
@@ -51,16 +50,16 @@ const AdminDashboard = () => {
             <span>Last 7 days</span>
           </div>
           <div className="admin-chart" aria-label="Sales chart">
-            {[46, 68, 52, 82, 74, 92, 78].map((height, index) => (
-              <span key={height + index} style={{ height: `${height}%` }} />
+            {salesChart.map((day) => (
+              <span key={day.date} title={`${day.date}: ${day.orders} orders`} style={{ height: `${Math.max(8, (day.sales / maxSales) * 100)}%` }} />
             ))}
           </div>
+          {salesChart.every((day) => day.sales === 0) && <p>No sales data yet.</p>}
         </article>
 
         <article className="admin-panel">
           <div className="admin-panel-heading">
             <h3>Low Stock</h3>
-            <Link to="/admin/inventory">View all</Link>
           </div>
           <div className="admin-list">
             {lowStock.map((product) => (
@@ -72,6 +71,7 @@ const AdminDashboard = () => {
                 <span className="admin-chip warning">{product.stock} left</span>
               </div>
             ))}
+            {lowStock.length === 0 && <p>No low stock products.</p>}
           </div>
         </article>
       </div>
@@ -104,6 +104,12 @@ const AdminDashboard = () => {
               ))}
             </tbody>
           </table>
+          {recentOrders.length === 0 && (
+            <div className="admin-empty-state compact">
+              <h3>No orders yet</h3>
+              <p>Orders will appear here once customers start buying.</p>
+            </div>
+          )}
         </div>
       </article>
     </section>

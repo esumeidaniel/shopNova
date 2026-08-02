@@ -46,6 +46,7 @@ export function StoreProvider({ children }) {
   const [wishlistItems, setWishlistItems] = useState(() => readStorage(WISHLIST_KEY, []))
   const [storeLoading, setStoreLoading] = useState(false)
   const [storeError, setStoreError] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState(null)
   const [remoteLoaded, setRemoteLoaded] = useState(false)
 
   useEffect(() => {
@@ -102,9 +103,10 @@ export function StoreProvider({ children }) {
 
     setCartItems((items) => {
       const existingItem = items.find((item) => item.key === key)
+      const maxStock = Number(product.stock || 0)
       if (existingItem) {
         return items.map((item) => (
-          item.key === key ? { ...item, quantity: item.quantity + quantity } : item
+          item.key === key ? { ...item, quantity: maxStock ? Math.min(maxStock, item.quantity + quantity) : item.quantity + quantity } : item
         ))
       }
 
@@ -118,7 +120,8 @@ export function StoreProvider({ children }) {
           price: product.price,
           image: product.image,
           options,
-          quantity,
+          quantity: maxStock ? Math.min(maxStock, quantity) : quantity,
+          stock: product.stock,
         },
       ]
     })
@@ -175,8 +178,8 @@ export function StoreProvider({ children }) {
 
   const cartSummary = useMemo(() => {
     const subtotal = cartItems.reduce((total, item) => total + moneyToNumber(item.price) * item.quantity, 0)
-    const discount = subtotal > 0 ? Math.min(45000, Math.round(subtotal * 0.03)) : 0
-    const deliveryFee = subtotal > 0 ? 2500 : 0
+    const discount = appliedCoupon ? Number(appliedCoupon.discountValue || 0) : 0
+    const deliveryFee = 0
     const total = subtotal - discount + deliveryFee
 
     return {
@@ -189,8 +192,9 @@ export function StoreProvider({ children }) {
       formattedDiscount: `-${numberToMoney(discount)}`,
       formattedDeliveryFee: numberToMoney(deliveryFee),
       formattedTotal: numberToMoney(total),
+      coupon: appliedCoupon,
     }
-  }, [cartItems])
+  }, [appliedCoupon, cartItems])
 
   const value = {
     cartItems,
@@ -204,6 +208,8 @@ export function StoreProvider({ children }) {
     clearCart,
     toggleWishlist,
     removeFromWishlist,
+    appliedCoupon,
+    setAppliedCoupon,
   }
 
   return (

@@ -1,21 +1,36 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { api } from '../../api'
 import './OrderSuccess.css'
 
 const OrderSuccess = () => {
   const { state } = useLocation()
-  const orderId = state?.orderId || 'Pending'
+  const [searchParams] = useSearchParams()
+  const queryOrderId = searchParams.get('orderId')
+  const reference = searchParams.get('reference') || searchParams.get('trxref')
+  const orderId = state?.orderId || queryOrderId || 'Pending'
   const order = state?.order || {}
+  const [paymentMessage, setPaymentMessage] = useState('')
   const itemCount = state?.items || order.items?.reduce?.((total, item) => total + Number(item.quantity || 1), 0) || 0
   const payment = state?.payment || order.paymentMethod || 'Pay on Delivery'
   const delivery = state?.delivery || order.deliveryAddress || 'Home Address'
   const deliveryMethod = state?.deliveryMethod || order.deliveryMethod || 'Standard delivery'
+
+  useEffect(() => {
+    if (!reference || !queryOrderId) return
+    setPaymentMessage('Verifying payment...')
+    api.verifyPaystackByBody({ reference, orderId: queryOrderId })
+      .then(({ paid }) => setPaymentMessage(paid ? 'Payment verified successfully.' : 'Payment was not completed.'))
+      .catch((error) => setPaymentMessage(error.message))
+  }, [queryOrderId, reference])
 
   return (
     <main className="order-success-page">
       <section className="success-card">
         <span className="success-mark">✓</span>
         <h1>Order confirmed</h1>
-        <p>Your SHOPNOVA order has been placed successfully. No online payment was collected because you selected Pay on Delivery.</p>
+        <p>Your SHOPNOVA order has been placed successfully.</p>
+        {paymentMessage && <p>{paymentMessage}</p>}
         <div className="success-payment-note">
           <strong>Pay on Delivery</strong>
           <span>Keep your order ID ready. Our team will confirm delivery details before dispatch.</span>

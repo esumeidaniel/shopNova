@@ -57,6 +57,74 @@ a {
   z-index: 80;
 }
 
+.trust-strip {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.trust-strip article,
+.reviews-newsletter {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 10px 22px rgba(13, 39, 88, 0.08);
+}
+
+.trust-strip article {
+  display: grid;
+  gap: 8px;
+  padding: 24px;
+}
+
+.trust-strip strong {
+  color: var(--navy-deep);
+  font-size: 18px;
+}
+
+.trust-strip span,
+.reviews-newsletter p {
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.reviews-newsletter {
+  align-items: center;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr minmax(280px, 420px);
+  padding: 30px;
+}
+
+.reviews-newsletter h2 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 10px;
+}
+
+.reviews-newsletter form {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.reviews-newsletter input {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  min-height: 46px;
+  padding: 0 14px;
+}
+
+.reviews-newsletter button {
+  background: var(--navy-deep);
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 900;
+  padding: 0 18px;
+}
+
 .hero-section,
 .content-section,
 .promo-grid,
@@ -150,6 +218,12 @@ a {
 .hero-actions a:last-child {
   background: #ffffff;
   color: var(--navy);
+}
+
+.cart-btn:disabled,
+.pl-cart-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .hero-shortcuts {
@@ -1067,6 +1141,15 @@ a {
   }
 
   .shopping-panels {
+    grid-template-columns: 1fr;
+  }
+
+  .trust-strip,
+  .reviews-newsletter {
+    grid-template-columns: 1fr;
+  }
+
+  .reviews-newsletter form {
     grid-template-columns: 1fr;
   }
 

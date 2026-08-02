@@ -1,10 +1,17 @@
 import jwt from 'jsonwebtoken'
+import { env } from '../config/env.js'
 import { getDb } from './db.js'
 
-const jwtSecret = process.env.JWT_SECRET || 'shopnova-local-secret'
+export function getJwtSecret() {
+  if (env.jwtSecret) return env.jwtSecret
+  if (env.isProduction) {
+    throw new Error('JWT_SECRET is required in production')
+  }
+  return 'shopnova-local-secret'
+}
 
 export function createToken(user) {
-  return jwt.sign({ id: user.id, role: user.role }, jwtSecret, { expiresIn: '7d' })
+  return jwt.sign({ id: user.id, role: user.role }, getJwtSecret(), { expiresIn: '7d' })
 }
 
 export async function requireLogin(req, res, next) {
@@ -16,7 +23,7 @@ export async function requireLogin(req, res, next) {
   }
 
   try {
-    const payload = jwt.verify(token, jwtSecret)
+    const payload = jwt.verify(token, getJwtSecret())
     const db = await getDb()
     const user = db.users.find((item) => item.id === payload.id)
 

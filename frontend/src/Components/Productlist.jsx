@@ -3,19 +3,26 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api'
 import { fallbackCategories, fallbackProducts, getProductImage } from '../productData'
 import { hasRealDiscount, visibleProducts as filterVisibleProducts } from '../productDisplay'
+import { useAuth } from '../useAuth'
 import { useStore } from '../useStore'
 import './Productlist.css'
 
 function ListingCard({ product, onToast }) {
     const navigate = useNavigate()
+    const { isLoggedIn } = useAuth()
     const { addToCart, toggleWishlist } = useStore()
     const showDiscount = hasRealDiscount(product)
+    const inStock = Number(product.stock || 0) > 0
     const productId = product.id
     const openProduct = () => {
         navigate(`/product/${productId}`)
     }
     const handleWishlist = (event) => {
         event.stopPropagation()
+        if (!isLoggedIn) {
+            navigate('/login', { state: { from: `/product/${product.id}` } })
+            return
+        }
         const saved = toggleWishlist(product)
         onToast(saved ? `${product.name} saved to wishlist` : `${product.name} removed from wishlist`)
     }
@@ -43,15 +50,16 @@ function ListingCard({ product, onToast }) {
                     <strong>{product.price}</strong>
                     {showDiscount && <span>{product.oldPrice}</span>}
                 </div>
-                <p className="pl-stock">{product.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
-                <button className="pl-cart-button" aria-label={`Add ${product.name} to cart`} onClick={handleCart}>Add to Cart</button>
+                <p className="pl-stock">{inStock ? 'In Stock' : 'Out of Stock'}</p>
+                <button className="pl-cart-button" aria-label={`Add ${product.name} to cart`} onClick={handleCart} disabled={!inStock}>Add to Cart</button>
             </div>
         </article>
     )
 }
 
 const Productlist = () => {
-    const [searchParams] = useSearchParams()
+    const navigate = useNavigate()
+    const [searchParams, setSearchParams] = useSearchParams()
     const [toast, setToast] = useState('')
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
@@ -60,6 +68,10 @@ const Productlist = () => {
     const [error, setError] = useState('')
     const selectedCategory = searchParams.get('category')
     const searchKeyword = searchParams.get('search')?.toLowerCase()
+    const selectedSort = searchParams.get('sort') || 'newest'
+    const selectedMinPrice = searchParams.get('minPrice') || ''
+    const selectedMaxPrice = searchParams.get('maxPrice') || ''
+    const selectedInStock = searchParams.get('inStock') === 'true'
     const query = searchParams.toString() ? `?${searchParams.toString()}` : ''
 
     useEffect(() => {
@@ -86,6 +98,14 @@ const Productlist = () => {
     }, [query, searchKeyword, selectedCategory])
 
     const visibleProducts = products
+    const updateFilters = (updates) => {
+        const nextParams = new URLSearchParams(searchParams)
+        Object.entries(updates).forEach(([key, value]) => {
+            if (value) nextParams.set(key, value)
+            else nextParams.delete(key)
+        })
+        setSearchParams(nextParams)
+    }
     const showToast = (message) => {
         setToast(message)
         window.setTimeout(() => setToast(''), 1800)
@@ -127,6 +147,38 @@ const Productlist = () => {
             </div>
 
             <section className="pl-layout">
+                <aside className="pl-filter-panel">
+                    <h2>Filter</h2>
+                    <label>
+                        Category
+                        <select value={selectedCategory || ''} onChange={(event) => updateFilters({ category: event.target.value })}>
+                            <option value="">All categories</option>
+                            {categories.map((category) => <option key={category.id || category.name} value={category.name}>{category.name}</option>)}
+                        </select>
+                    </label>
+                    <label>
+                        Min price
+                        <input value={selectedMinPrice} inputMode="numeric" onChange={(event) => updateFilters({ minPrice: event.target.value.replace(/\D/g, '') })} placeholder="0" />
+                    </label>
+                    <label>
+                        Max price
+                        <input value={selectedMaxPrice} inputMode="numeric" onChange={(event) => updateFilters({ maxPrice: event.target.value.replace(/\D/g, '') })} placeholder="500000" />
+                    </label>
+                    <label className="pl-checkbox">
+                        <input checked={selectedInStock} type="checkbox" onChange={(event) => updateFilters({ inStock: event.target.checked ? 'true' : '' })} />
+                        In stock only
+                    </label>
+                    <label>
+                        Sort by
+                        <select value={selectedSort} onChange={(event) => updateFilters({ sort: event.target.value })}>
+                            <option value="newest">Newest</option>
+                            <option value="popular">Popular</option>
+                            <option value="price-low">Price: low to high</option>
+                            <option value="price-high">Price: high to low</option>
+                        </select>
+                    </label>
+                    <button type="button" onClick={() => navigate('/products')}>Clear filters</button>
+                </aside>
                 <div className="pl-results">
                     {loading && <section className="pl-empty-state"><h2>Loading products...</h2></section>}
                     {error && <section className="pl-empty-state"><h2>{error}</h2></section>}

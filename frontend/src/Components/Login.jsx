@@ -8,6 +8,8 @@ const Login = () => {
     const location = useLocation()
     const { authError, authLoading, login } = useAuth()
     const [showPassword, setShowPassword] = useState(false)
+    const [loginError, setLoginError] = useState('')
+    const googleEnabled = false
 
     return (
         <main className="login">
@@ -24,15 +26,21 @@ const Login = () => {
 
                 <p className="login-alert">Please log in or create an account to continue.</p>
 
-                {authError && <p className="login-alert">{authError}</p>}
+                {(loginError || authError) && <p className="login-alert">{loginError || authError}</p>}
 
                 <form className="login-form" onSubmit={async (event) => {
                     event.preventDefault()
                     const email = event.currentTarget.elements.email.value.trim()
                     const password = event.currentTarget.elements.password.value
+                    setLoginError('')
+
+                    if (!email || !password) {
+                        setLoginError('Email and password are required.')
+                        return
+                    }
 
                     try {
-                        const user = await login(email || 'customer@shopnova.ng', password || 'password123')
+                        const user = await login(email, password)
                         navigate(location.state?.from || (user.role === 'admin' ? '/admin' : '/'))
                     } catch {
                         // The auth provider displays the backend error message.
@@ -53,12 +61,15 @@ const Login = () => {
                     <button type="submit" className="login-submit" disabled={authLoading}>{authLoading ? 'Logging in...' : 'Log In'}</button>
                 </form>
 
-                <div className="login-divider">or continue with</div>
-
-                <button className="google-login" type="button">
-                    <span>G</span>
-                    Continue with Google
-                </button>
+                {googleEnabled && (
+                    <>
+                        <div className="login-divider">or continue with</div>
+                        <button className="google-login" type="button">
+                            <span>G</span>
+                            Continue with Google
+                        </button>
+                    </>
+                )}
 
                 <p className="register-link">
                     Don't have an account? <Link to="/register">Register</Link>

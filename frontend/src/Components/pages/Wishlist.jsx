@@ -47,7 +47,7 @@ const Wishlist = () => {
                 <section className="wishlist-empty">
                     <h2>Your wishlist is empty</h2>
                     <p>Save electronics you want to compare or buy later.</p>
-                    <Link to="/products">Explore Products</Link>
+                    <Link to="/products">Start Shopping</Link>
                 </section>
             )}
         </main>

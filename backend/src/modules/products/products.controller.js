@@ -1,51 +1,84 @@
 import { getDb, saveDb } from '../../shared/db.js'
-import { slugify } from '../../shared/helpers.js'
+import { moneyToNumber, slugify } from '../../shared/helpers.js'
 import { deleteCloudinaryImage } from '../../config/cloudinary.js'
+import { validateProduct } from '../../shared/validation.js'
 
 function filterProducts(products, query) {
   const search = query.search?.toLowerCase()
   const category = query.category
+  const minPrice = Number(query.minPrice || 0)
+  const maxPrice = Number(query.maxPrice || 0)
+  const inStock = query.inStock === 'true'
+  const sort = query.sort || ''
 
-  return products.filter((product) => {
+  const filteredProducts = products.filter((product) => {
     const matchesSearch = search
       ? [product.name, product.brand, product.category].join(' ').toLowerCase().includes(search)
       : true
     const matchesCategory = category ? product.category === category : true
-    return matchesSearch && matchesCategory
+    const productPrice = moneyToNumber(product.price)
+    const matchesMinPrice = minPrice ? productPrice >= minPrice : true
+    const matchesMaxPrice = maxPrice ? productPrice <= maxPrice : true
+    const matchesStock = inStock ? Number(product.stock || 0) > 0 : true
+    return matchesSearch && matchesCategory && matchesMinPrice && matchesMaxPrice && matchesStock
+  })
+
+  return filteredProducts.sort((a, b) => {
+    if (sort === 'price-low') return moneyToNumber(a.price) - moneyToNumber(b.price)
+    if (sort === 'price-high') return moneyToNumber(b.price) - moneyToNumber(a.price)
+    if (sort === 'popular') return Number(b.bestSeller) - Number(a.bestSeller)
+    return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
   })
 }
 
-function makeProduct(body) {
+function uniqueProductId(products, name) {
+  const baseId = slugify(name)
+  let id = baseId
+  let index = 2
+
+  while (products.some((product) => product.id === id)) {
+    id = `${baseId}-${index}`
+    index += 1
+  }
+
+  return id
+}
+
+function makeProduct(body, products = []) {
   const name = body.name?.trim()
   const stock = Number(body.stock || 0)
+  const requestedStatus = body.status || 'Active'
+  const status = stock <= 0 ? 'Out of Stock' : requestedStatus
 
   return {
-    id: body.id || slugify(name),
+    id: body.id || uniqueProductId(products, name),
     name,
-    brand: body.brand || 'SHOPNOVA',
-    category: body.category || 'Accessories',
-    price: body.price || '₦0',
+    brand: body.brand || '',
+    category: body.category,
+    price: body.price,
     oldPrice: body.oldPrice || '',
     discount: body.discount || '',
     stock,
-    status: body.status || (stock <= 5 ? 'Low Stock' : 'Active'),
+    status,
     description: body.description || `${name} from the SHOPNOVA electronics catalog.`,
     image: body.image || '',
     imagePublicId: body.imagePublicId || '',
     images: body.images || (body.image ? [body.image] : []),
     featured: Boolean(body.featured),
     bestSeller: Boolean(body.bestSeller),
+    createdAt: body.createdAt || new Date().toISOString(),
   }
 }
 
 export async function listProducts(req, res) {
   const db = await getDb()
-  res.json({ products: filterProducts(db.products, req.query) })
+  const publicProducts = db.products.filter((product) => ['Active', 'Published'].includes(product.status))
+  res.json({ products: filterProducts(publicProducts, req.query) })
 }
 
 export async function listCategories(req, res) {
   const db = await getDb()
-  const categories = db.categories.map((category) => ({
+  const categories = db.categories.filter((category) => category.visible !== false && category.status !== 'Disabled').map((category) => ({
     ...category,
     products: db.products.filter((product) => product.category === category.name).length,
   }))
@@ -57,14 +90,15 @@ export async function getProduct(req, res) {
   const db = await getDb()
   const product = db.products.find((item) => item.id === req.params.id)
 
-  if (!product) return res.status(404).json({ message: 'Product not found' })
+  if (!product || !['Active', 'Published'].includes(product.status)) return res.status(404).json({ message: 'Product not found' })
   return res.json({ product })
 }
 
 export async function createProduct(req, res) {
-  if (!req.body.name) return res.status(400).json({ message: 'Product name is required' })
+  const validationError = validateProduct(req.body)
+  if (validationError) return res.status(400).json({ message: validationError })
 
-  const product = makeProduct(req.body)
+  const product = makeProduct(req.body, req.db.products)
   if (req.db.products.some((item) => item.id === product.id)) {
     return res.status(400).json({ message: 'Product already exists' })
   }
@@ -86,7 +120,13 @@ export async function updateProduct(req, res) {
     await deleteCloudinaryImage(currentProduct.imagePublicId)
   }
 
-  req.db.products[index] = { ...currentProduct, ...req.body, id: req.params.id }
+  const nextProduct = { ...currentProduct, ...req.body, id: req.params.id }
+  const validationError = validateProduct(nextProduct)
+  if (validationError) return res.status(400).json({ message: validationError })
+
+  nextProduct.stock = Number(nextProduct.stock || 0)
+  nextProduct.status = nextProduct.stock <= 0 ? 'Out of Stock' : (req.body.status || currentProduct.status || 'Active')
+  req.db.products[index] = nextProduct
   await saveDb(req.db)
   return res.json({ product: req.db.products[index] })
 }

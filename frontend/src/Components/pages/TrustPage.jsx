@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { api } from '../../api'
 import './TrustPage.css'
 
 const pageContent = {
@@ -61,6 +63,9 @@ const pageContent = {
 const TrustPage = ({ type }) => {
   const content = pageContent[type] || pageContent.about
   const isContact = type === 'contact'
+  const [contactMessage, setContactMessage] = useState('')
+  const [contactError, setContactError] = useState('')
+  const [contactLoading, setContactLoading] = useState(false)
 
   return (
     <main className={`trust-page ${isContact ? 'contact-page' : ''}`}>
@@ -74,6 +79,10 @@ const TrustPage = ({ type }) => {
       {isContact ? (
         <section className="contact-support-panel">
           <div className="contact-methods">
+            <div className="contact-intro">
+              <h1>{content.title}</h1>
+              <p>{content.intro}</p>
+            </div>
             {content.cards.map(([title, text]) => (
               <article key={title}>
                 <h2>{title}</h2>
@@ -81,12 +90,35 @@ const TrustPage = ({ type }) => {
               </article>
             ))}
           </div>
-          <form className="contact-form" onSubmit={(event) => event.preventDefault()}>
-            <input aria-label="Full name" placeholder="Full name" />
-            <input aria-label="Email address" placeholder="Email address" />
-            <input aria-label="Order ID" placeholder="Order ID (optional)" />
-            <textarea aria-label="Message" placeholder="How can we help?" rows="5" />
-            <button type="submit">Send Message</button>
+          <form className="contact-form" onSubmit={async (event) => {
+            event.preventDefault()
+            setContactMessage('')
+            setContactError('')
+            setContactLoading(true)
+            const form = event.currentTarget
+            try {
+              const response = await api.submitContact({
+                name: form.elements.name.value,
+                email: form.elements.email.value,
+                orderId: form.elements.orderId.value,
+                message: form.elements.message.value,
+              })
+              setContactMessage(response.message)
+              form.reset()
+            } catch (error) {
+              setContactError(error.message)
+            } finally {
+              setContactLoading(false)
+            }
+          }}>
+            <h2>Send a Message</h2>
+            <input name="name" aria-label="Full name" placeholder="Full name" />
+            <input name="email" aria-label="Email address" placeholder="Email address" />
+            <input name="orderId" aria-label="Order ID" placeholder="Order ID (optional)" />
+            <textarea name="message" aria-label="Message" placeholder="How can we help?" rows="4" />
+            <button type="submit" disabled={contactLoading}>{contactLoading ? 'Sending...' : 'Send Message'}</button>
+            {contactMessage && <p className="contact-status success">{contactMessage}</p>}
+            {contactError && <p className="contact-status error">{contactError}</p>}
           </form>
         </section>
       ) : (

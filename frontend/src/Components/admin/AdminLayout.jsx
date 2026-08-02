@@ -8,9 +8,10 @@ const navItems = [
   ['Orders', '/admin/orders'],
   ['Customers', '/admin/customers'],
   ['Categories', '/admin/categories'],
-  ['Inventory', '/admin/inventory'],
   ['Coupons', '/admin/coupons'],
-  ['Settings', '/admin/settings'],
+  ['Reviews', '/admin/reviews'],
+  ['Reports', '/admin/reports'],
+  ['Store Settings', '/admin/settings'],
 ]
 
 function getInitials(email) {
@@ -49,17 +50,10 @@ const AdminLayout = () => {
       </aside>
 
       <section className="admin-main">
-        <header className="admin-topbar">
-          <div>
-            <p>Owner workspace</p>
-            <h1>Manage SHOPNOVA</h1>
-          </div>
-          <div className="admin-user">
-            <span>{getInitials(userEmail)}</span>
-            <button type="button" onClick={handleLogout}>Logout</button>
-          </div>
-        </header>
-
+        <div className="admin-user admin-user-compact">
+          <span>{getInitials(userEmail)}</span>
+          <button type="button" onClick={handleLogout}>Logout</button>
+        </div>
         <Outlet />
       </section>
     </main>

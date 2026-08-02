@@ -18,6 +18,7 @@ const Orders = () => {
         const matchesSearch = search ? haystack.includes(search.toLowerCase()) : true
         return matchesTab && matchesSearch
     }), [activeTab, orders, search])
+    const showEmptyState = !loading && !error && visibleOrders.length === 0
 
     useEffect(() => {
         api.orders()
@@ -46,12 +47,16 @@ const Orders = () => {
                 <input aria-label="Search orders" placeholder="Search order ID or product name" value={search} onChange={(event) => setSearch(event.target.value)} />
             </section>
 
-            <section className="orders-layout">
+            <section className={`orders-layout ${showEmptyState ? 'orders-layout-empty' : ''}`}>
                 <div className="orders-list">
                     {loading && <article className="order-card"><h2>Loading orders...</h2></article>}
                     {error && <article className="order-card"><h2>{error}</h2></article>}
-                    {!loading && !error && visibleOrders.length === 0 && (
-                        <article className="order-card"><h2>No orders found</h2><Link to="/products">Start Shopping</Link></article>
+                    {showEmptyState && (
+                        <article className="orders-empty-card">
+                            <h2>No orders found</h2>
+                            <p>Your orders will appear here after checkout.</p>
+                            <Link to="/products">Start Shopping</Link>
+                        </article>
                     )}
                     {visibleOrders.map((order) => (
                         <article className="order-card" key={order.id}>
@@ -67,14 +72,6 @@ const Orders = () => {
                         </article>
                     ))}
                 </div>
-
-                <aside className="order-detail-card">
-                    <h2>Order Detail View</h2>
-                    <h3>Timeline</h3>
-                    <p className="order-timeline">Placed → Processing → Shipped → Delivered</p>
-                    <p>Full item list, delivery address, payment method, and invoice download.</p>
-                    <button>Download Invoice</button>
-                </aside>
             </section>
         </main>
     )

@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { api } from '../../api'
 import { useStore } from '../../useStore'
 import './Cart.css'
 
@@ -19,7 +21,7 @@ function CartItem({ item }) {
             <div className="cart-quantity">
                 <button type="button" onClick={() => updateCartQuantity(item.key, item.quantity - 1)}>-</button>
                 <span>{item.quantity}</span>
-                <button type="button" onClick={() => updateCartQuantity(item.key, item.quantity + 1)}>+</button>
+                <button type="button" disabled={item.stock && item.quantity >= item.stock} onClick={() => updateCartQuantity(item.key, item.quantity + 1)}>+</button>
             </div>
             <button className="cart-remove" type="button" onClick={() => removeFromCart(item.key)}>Remove</button>
         </article>
@@ -27,7 +29,26 @@ function CartItem({ item }) {
 }
 
 const Cart = () => {
-    const { cartItems, cartSummary } = useStore()
+    const { cartItems, cartSummary, setAppliedCoupon } = useStore()
+    const [couponCode, setCouponCode] = useState('')
+    const [couponMessage, setCouponMessage] = useState('')
+    const [couponLoading, setCouponLoading] = useState(false)
+    const applyCoupon = async (event) => {
+        event.preventDefault()
+        setCouponLoading(true)
+        setCouponMessage('')
+
+        try {
+            const coupon = await api.validateCoupon({ code: couponCode, subtotal: cartSummary.subtotal })
+            setAppliedCoupon(coupon)
+            setCouponMessage(`${coupon.coupon.code} applied`)
+        } catch (error) {
+            setAppliedCoupon(null)
+            setCouponMessage(error.message)
+        } finally {
+            setCouponLoading(false)
+        }
+    }
 
     return (
         <main className="cart-page">
@@ -42,15 +63,16 @@ const Cart = () => {
                                 ))}
                             </div>
 
-                            <form className="coupon-form" onSubmit={(event) => event.preventDefault()}>
-                                <input aria-label="Promo or coupon code" placeholder="Promo / coupon code" />
-                                <button type="submit">Apply</button>
+                            <form className="coupon-form" onSubmit={applyCoupon}>
+                                <input aria-label="Promo or coupon code" placeholder="Promo / coupon code" value={couponCode} onChange={(event) => setCouponCode(event.target.value)} />
+                                <button type="submit" disabled={couponLoading}>{couponLoading ? 'Applying...' : 'Apply'}</button>
+                                {couponMessage && <p>{couponMessage}</p>}
                             </form>
                         </>
                     ) : (
                         <section className="empty-cart-card inline-empty">
                             <h2>Your cart is empty</h2>
-                            <p>Start shopping from the SHOPNOVA electronics catalog.</p>
+                            <p>Start shopping from the SHOPNOVA catalog.</p>
                             <Link to="/products">Start Shopping</Link>
                         </section>
                     )}
@@ -66,7 +88,7 @@ const Cart = () => {
                                     <dd>{cartSummary.formattedSubtotal}</dd>
                                 </div>
                                 <div className="discount">
-                                    <dt>Applied discount</dt>
+                                    <dt>Applied discount{cartSummary.coupon ? ` (${cartSummary.coupon.coupon.code})` : ''}</dt>
                                     <dd>{cartSummary.formattedDiscount}</dd>
                                 </div>
                                 <div>

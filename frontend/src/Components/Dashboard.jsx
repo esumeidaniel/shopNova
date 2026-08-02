@@ -21,8 +21,10 @@ const categoryIcons = {
 
 function ProductCard({ product, onToast }) {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   const { addToCart, toggleWishlist } = useStore();
   const showDiscount = hasRealDiscount(product);
+  const inStock = Number(product.stock || 0) > 0;
 
   return (
     <article className="product-card" onClick={() => navigate(`/product/${product.id}`)}>
@@ -34,6 +36,10 @@ function ProductCard({ product, onToast }) {
         </div>
         <button className="wishlist-btn" aria-label={`Add ${product.name} to wishlist`} onClick={(event) => {
           event.stopPropagation();
+          if (!isLoggedIn) {
+            navigate('/login', { state: { from: '/' } });
+            return;
+          }
           const saved = toggleWishlist(product);
           onToast(saved ? `${product.name} saved to wishlist` : `${product.name} removed from wishlist`);
         }}>
@@ -47,12 +53,12 @@ function ProductCard({ product, onToast }) {
           <strong>{product.price}</strong>
           {showDiscount && <span>{product.oldPrice}</span>}
         </div>
-        <p className="stock">{product.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
+        <p className="stock">{inStock ? 'In Stock' : 'Out of Stock'}</p>
         <button className="cart-btn" onClick={(event) => {
           event.stopPropagation();
           addToCart(product);
           onToast('Added to cart');
-        }} aria-label={`Add ${product.name} to cart`}>Add to Cart</button>
+        }} aria-label={`Add ${product.name} to cart`} disabled={!inStock}>Add to Cart</button>
       </div>
     </article>
   );
@@ -84,16 +90,21 @@ const Dashboard = () => {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [homeError, setHomeError] = useState('');
+  const [settings, setSettings] = useState({});
   const featuredProducts = products.filter((product) => product.featured).slice(0, 8);
   const displayedFeatured = featuredProducts.length > 0 ? featuredProducts : products.slice(0, 8);
   const bestSellerProducts = products.filter((product) => product.bestSeller).slice(0, 4);
   const displayedBestSellers = bestSellerProducts.length > 0 ? bestSellerProducts : products.slice(8, 12);
+  const newArrivals = [...products].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 4);
+  const flashDeals = products.filter(hasRealDiscount).slice(0, 4);
+  const recommended = products.slice(0, 4);
 
   useEffect(() => {
-    Promise.all([api.products(), api.productCategories()])
-      .then(([productData, categoryData]) => {
+    Promise.all([api.products(), api.productCategories(), api.publicSettings()])
+      .then(([productData, categoryData, settingsData]) => {
         setProducts(visibleProducts(productData.products || []));
         setCategories(categoryData.categories || []);
+        setSettings(settingsData.settings || {});
       })
       .catch(() => {
         setProducts(visibleProducts(fallbackProducts));
@@ -106,6 +117,7 @@ const Dashboard = () => {
     setToast(message);
     window.setTimeout(() => setToast(''), 1800);
   };
+  const hero = settings.heroSlides?.[0];
 
   return (
     <main className="dashboard">
@@ -114,8 +126,8 @@ const Dashboard = () => {
         <section className="hero-section">
           <div className="hero-copy">
             <>
-              <h1>Your trusted electronics store</h1>
-              <p>Shop phones, laptops, chargers, accessories, audio devices and smart gadgets with secure checkout.</p>
+              <h1>{hero?.title || 'Your trusted electronics store'}</h1>
+              <p>{hero?.subtitle || 'Browse the latest products added by our store team.'}</p>
               <div className="hero-actions">
                 <Link to="/products">Browse Products</Link>
                 <Link to="/register">Create Account</Link>
@@ -123,7 +135,7 @@ const Dashboard = () => {
             </>
           </div>
           <div className="hero-visual">
-            <img className="hero-products-image" src={heroProducts} alt="" />
+            <img className="hero-products-image" src={hero?.image || heroProducts} alt="" />
           </div>
         </section>
       )}
@@ -159,18 +171,67 @@ const Dashboard = () => {
         <ProductGrid products={displayedFeatured} onToast={showToast} />
       </section>
 
-      <section className="content-section">
-        <div className="section-heading">
-          <h2>Best Sellers</h2>
+      {products.length > 0 && (
+        <>
+          <section className="content-section">
+            <div className="section-heading">
+              <h2>Best Sellers</h2>
+            </div>
+            <ProductGrid products={displayedBestSellers} onToast={showToast} />
+          </section>
+
+          <section className="content-section">
+            <div className="section-heading with-action">
+              <h2>New Arrivals</h2>
+              <Link to="/products?sort=newest">See New</Link>
+            </div>
+            <ProductGrid products={newArrivals} onToast={showToast} />
+          </section>
+
+          {flashDeals.length > 0 && (
+            <section className="content-section">
+              <div className="section-heading with-action">
+                <h2>Flash Deals</h2>
+                <Link to="/products?sort=popular">View Deals</Link>
+              </div>
+              <ProductGrid products={flashDeals} onToast={showToast} />
+            </section>
+          )}
+
+          <section className="content-section">
+            <div className="section-heading with-action">
+              <h2>Recommended Gadgets</h2>
+              <Link to="/products">Browse All</Link>
+            </div>
+            <ProductGrid products={recommended} onToast={showToast} />
+          </section>
+        </>
+      )}
+
+      {settings.trustItems?.length > 0 && <section className="trust-strip content-section">
+        {settings.trustItems.map((item, index) => <article key={`${item.title}-${index}`}><strong>{item.title}</strong><span>{item.text}</span></article>)}
+      </section>}
+
+      <section className="reviews-newsletter content-section">
+        <div>
+          <h2>Customers shop SHOPNOVA for reliable gadgets.</h2>
+          <p>Verified reviews will appear here as real orders come in.</p>
         </div>
-        <ProductGrid products={displayedBestSellers} onToast={showToast} />
+        <form onSubmit={(event) => {
+          event.preventDefault()
+          showToast('Thanks. We will keep you updated.')
+          event.currentTarget.reset()
+        }}>
+          <input type="email" placeholder="Email or WhatsApp number" aria-label="Email or WhatsApp number" />
+          <button type="submit">Get Updates</button>
+        </form>
       </section>
 
       <footer className="site-footer">
         <div className="footer-grid">
           <div>
-            <h2>SHOPNOVA</h2>
-            <p>Modern online store for phones, laptops, chargers, audio devices and electronics in Nigeria.</p>
+            <h2>{settings.storeName || 'SHOPNOVA'}</h2>
+            <p>{settings.footerDescription || ''}</p>
           </div>
           <div>
             <h3>Quick Links</h3>
@@ -201,11 +262,11 @@ const Dashboard = () => {
           </div>
           <div>
             <h3>Contact & App</h3>
-            <p>Lagos, Nigeria<br />support@shopnova.ng</p>
+            <p>{settings.address}<br />{settings.supportEmail}<br />{settings.phone}</p>
           </div>
         </div>
         <div className="footer-bottom">
-          <span>© 2026 SHOPNOVA. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} {settings.storeName || 'SHOPNOVA'}. All rights reserved.</span>
           <span>Visa&nbsp;&nbsp; Mastercard&nbsp;&nbsp; Paystack&nbsp;&nbsp; Verve</span>
         </div>
       </footer>

@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../../api'
 import { emptyProduct, fallbackProducts, getProductById, getProductImage } from '../../productData'
 import { hasRealDiscount, visibleProducts } from '../../productDisplay'
+import { useAuth } from '../../useAuth'
 import { useStore } from '../../useStore'
 import './ProductDetail.css'
 
@@ -56,6 +57,8 @@ function getProductSpecs(product) {
 }
 
 function RelatedCard({ product, onToast }) {
+    const navigate = useNavigate()
+    const { isLoggedIn } = useAuth()
     const { addToCart, toggleWishlist } = useStore()
     const showDiscount = hasRealDiscount(product)
     const handleAddToCart = () => {
@@ -68,7 +71,14 @@ function RelatedCard({ product, onToast }) {
             <div className="pd-card-media">
                 {product.image && <img src={product.image || getProductImage(product.name)} alt={product.name} />}
                 {showDiscount && <span>{product.discount}</span>}
-                <button aria-label={`Save ${product.name} to wishlist`} onClick={() => toggleWishlist(product)}>♡</button>
+                <button aria-label={`Save ${product.name} to wishlist`} onClick={() => {
+                    if (!isLoggedIn) {
+                        navigate('/login', { state: { from: `/product/${product.id}` } })
+                        return
+                    }
+                    toggleWishlist(product)
+                    onToast(`${product.name} saved to wishlist`)
+                }}>♡</button>
             </div>
             <div className="pd-card-body">
                 <Link className="pd-card-title" to={`/product/${product.id}`}>{product.name}</Link>
@@ -87,6 +97,7 @@ function RelatedCard({ product, onToast }) {
 const ProductDetail = () => {
     const { id } = useParams()
     const navigate = useNavigate()
+    const { isLoggedIn } = useAuth()
     const { addToCart, toggleWishlist } = useStore()
     const [toast, setToast] = useState('')
     const [product, setProduct] = useState(() => getProductById(id))
@@ -102,6 +113,7 @@ const ProductDetail = () => {
         optionGroups.map(([label, options]) => [label, options[1] || options[0]]),
     ))
     const showDiscount = hasRealDiscount(product)
+    const inStock = Number(product.stock || 0) > 0
     useEffect(() => {
         setLoading(true)
         setError('')
@@ -144,12 +156,12 @@ const ProductDetail = () => {
     }
     const handleAddToCart = () => {
         if (!product.id || !product.name) return
-        addToCart(product.id, selectedOptions, quantity)
+        addToCart(product, selectedOptions, quantity)
         showToast(`${product.name} added to cart`)
     }
     const handleBuyNow = () => {
         if (!product.id || !product.name) return
-        addToCart(product.id, selectedOptions, quantity)
+        addToCart(product, selectedOptions, quantity)
         navigate('/checkout')
     }
 
@@ -206,7 +218,7 @@ const ProductDetail = () => {
                         {showDiscount && <b>{product.discount}</b>}
                     </div>
 
-                    <p className="pd-stock"><span /> In Stock</p>
+                    <p className={`pd-stock ${inStock ? '' : 'out'}`}><span /> {inStock ? `${product.stock} in stock` : 'Out of stock'}</p>
 
                     {optionGroups.map(([label, options]) => (
                         <div className="pd-option-group" key={label}>
@@ -231,17 +243,21 @@ const ProductDetail = () => {
                         <div>
                             <button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))}>-</button>
                             <span>{quantity}</span>
-                            <button type="button" onClick={() => setQuantity((value) => value + 1)}>+</button>
+                            <button type="button" onClick={() => setQuantity((value) => Math.min(Number(product.stock || 1), value + 1))}>+</button>
                         </div>
                     </div>
 
                     <div className="pd-purchase-actions">
-                        <button type="button" onClick={handleAddToCart}>Add to Cart</button>
-                        <button type="button" onClick={handleBuyNow}>Buy Now</button>
+                        <button type="button" onClick={handleAddToCart} disabled={!inStock}>Add to Cart</button>
+                        <button type="button" onClick={handleBuyNow} disabled={!inStock}>Buy Now</button>
                     </div>
 
                     <button className="pd-save" onClick={() => {
-                        const saved = toggleWishlist(product.id)
+                        if (!isLoggedIn) {
+                            navigate('/login', { state: { from: `/product/${product.id}` } })
+                            return
+                        }
+                        const saved = toggleWishlist(product)
                         showToast(saved ? `${product.name} saved to wishlist` : `${product.name} removed from wishlist`)
                     }}>♡ Save to Wishlist</button>
                 </div>
@@ -258,6 +274,10 @@ const ProductDetail = () => {
                 <div className="pd-spec-box">
                     <h3>Specifications</h3>
                     <p>{specs.map((spec) => <span key={spec}>{spec}<br /></span>)}</p>
+                </div>
+                <div className="pd-spec-box">
+                    <h3>Customer Reviews</h3>
+                    <p>Reviews will appear here after customers start buying this product.</p>
                 </div>
             </section>
 

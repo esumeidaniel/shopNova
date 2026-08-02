@@ -8,6 +8,8 @@ import AdminInventory from './Components/admin/AdminInventory'
 import AdminLayout from './Components/admin/AdminLayout'
 import AdminOrders from './Components/admin/AdminOrders'
 import AdminProducts from './Components/admin/AdminProducts'
+import AdminReports from './Components/admin/AdminReports'
+import AdminReviews from './Components/admin/AdminReviews'
 import AdminSettings from './Components/admin/AdminSettings'
 import Cart from './Components/pages/Cart'
 import Checkout from './Components/pages/Checkout'
@@ -123,6 +125,8 @@ function App() {
             <Route path="categories" element={<AdminCategories />} />
             <Route path="inventory" element={<AdminInventory />} />
             <Route path="coupons" element={<AdminCoupons />} />
+            <Route path="reviews" element={<AdminReviews />} />
+            <Route path="reports" element={<AdminReports />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
           <Route path="*" element={<PublicPage><NotFound /></PublicPage>} />

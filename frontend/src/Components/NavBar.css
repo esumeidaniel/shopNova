@@ -6,6 +6,15 @@
   z-index: 20;
 }
 
+.announcement-bar {
+  background: var(--navy-deep, #071c46);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 8px 16px;
+  text-align: center;
+}
+
 .site-header {
   align-items: center;
   display: grid;

@@ -53,7 +53,7 @@ export function AuthProvider({ children }) {
     return session.user
   }
 
-  const login = async (email = 'customer@shopnova.ng', password = 'password123') => {
+  const login = async (email, password) => {
     setAuthLoading(true)
     setAuthError('')
 
@@ -84,7 +84,7 @@ export function AuthProvider({ children }) {
       storeSession(session)
       setToken(session.token)
       setUser(session.user)
-      return session.user
+      return session
     } catch (error) {
       if (allowDemoFallback && error.message === 'Failed to fetch') {
         return createDemoSession({ formData })

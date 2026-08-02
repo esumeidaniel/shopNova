@@ -24,10 +24,14 @@ export async function uploadProductImage(req, res) {
     return res.status(500).json({ message: 'Cloudinary is not configured on the backend' })
   }
 
-  const result = await uploadBufferToCloudinary(req.file)
+  try {
+    const result = await uploadBufferToCloudinary(req.file)
 
-  return res.status(201).json({
-    image: result.secure_url,
-    publicId: result.public_id,
-  })
+    return res.status(201).json({
+      image: result.secure_url,
+      publicId: result.public_id,
+    })
+  } catch {
+    return res.status(502).json({ message: 'Image upload failed. Check Cloudinary credentials and try again.' })
+  }
 }

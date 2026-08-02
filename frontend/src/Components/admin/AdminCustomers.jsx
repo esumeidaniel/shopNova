@@ -3,7 +3,12 @@ import { api } from '../../api'
 
 const AdminCustomers = () => {
   const [customers, setCustomers] = useState([])
+  const [search, setSearch] = useState('')
   const [error, setError] = useState('')
+  const visibleCustomers = customers.filter((customer) => {
+    const haystack = [customer.firstName, customer.lastName, customer.email].join(' ').toLowerCase()
+    return search ? haystack.includes(search.toLowerCase()) : true
+  })
 
   useEffect(() => {
     api.adminCustomers()
@@ -13,19 +18,18 @@ const AdminCustomers = () => {
 
   return (
     <section className="admin-page">
-      <div className="admin-page-heading">
-        <div>
-          <h2>Customers</h2>
-          <p>View customer accounts, order history, and spending activity.</p>
-        </div>
-      </div>
-
       <article className="admin-panel">
         <div className="admin-panel-heading">
-          <h3>Customer List</h3>
-          <input className="admin-search" aria-label="Search customers" placeholder="Search customers" />
+          <h3>Customers</h3>
+          <input className="admin-search" aria-label="Search customers" placeholder="Search customers" value={search} onChange={(event) => setSearch(event.target.value)} />
         </div>
         {error && <p>{error}</p>}
+        {visibleCustomers.length === 0 && !error && (
+          <div className="admin-empty-state">
+            <h3>No customers yet</h3>
+            <p>Customers will appear here after registration or orders.</p>
+          </div>
+        )}
         <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
@@ -38,7 +42,7 @@ const AdminCustomers = () => {
               </tr>
             </thead>
             <tbody>
-              {customers.map((customer) => (
+              {visibleCustomers.map((customer) => (
                 <tr key={customer.email}>
                   <td>{`${customer.firstName || ''} ${customer.lastName || ''}`.trim() || customer.email}</td>
                   <td>{customer.email}</td>

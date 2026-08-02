@@ -1,4 +1,6 @@
+import bcrypt from 'bcryptjs'
 import { removePassword, saveDb } from '../../shared/db.js'
+import { validateAddress, validatePasswordChange } from '../../shared/validation.js'
 
 export function getProfile(req, res) {
   res.json({ user: removePassword(req.user) })
@@ -24,6 +26,8 @@ export function listAddresses(req, res) {
 
 export async function createAddress(req, res) {
   req.user.addresses ||= []
+  const validationError = validateAddress(req.body)
+  if (validationError) return res.status(400).json({ message: validationError })
 
   const address = {
     id: `addr_${Date.now()}`,
@@ -48,7 +52,11 @@ export async function updateAddress(req, res) {
   if (index === -1) return res.status(404).json({ message: 'Address not found' })
   if (req.body.isDefault) req.user.addresses.forEach((item) => { item.isDefault = false })
 
-  req.user.addresses[index] = { ...req.user.addresses[index], ...req.body, id: req.params.id }
+  const nextAddress = { ...req.user.addresses[index], ...req.body, id: req.params.id }
+  const validationError = validateAddress(nextAddress)
+  if (validationError) return res.status(400).json({ message: validationError })
+
+  req.user.addresses[index] = nextAddress
   await saveDb(req.db)
   return res.json({ address: req.user.addresses[index] })
 }
@@ -91,4 +99,16 @@ export async function updateCart(req, res) {
 
 export function listOrders(req, res) {
   res.json({ orders: req.db.orders.filter((order) => order.userId === req.user.id) })
+}
+
+export async function updatePassword(req, res) {
+  const validationError = validatePasswordChange(req.body)
+  if (validationError) return res.status(400).json({ message: validationError })
+
+  const currentPasswordIsValid = await bcrypt.compare(req.body.currentPassword, req.user.password || '')
+  if (!currentPasswordIsValid) return res.status(400).json({ message: 'Current password is incorrect' })
+
+  req.user.password = await bcrypt.hash(req.body.newPassword, 10)
+  await saveDb(req.db)
+  return res.json({ message: 'Password updated successfully' })
 }

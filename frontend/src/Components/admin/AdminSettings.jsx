@@ -23,11 +23,8 @@ const AdminSettings = () => {
 
   return (
     <section className="admin-page">
-      <div className="admin-page-heading">
-        <div>
-          <h2>Settings</h2>
-          <p>Control store identity, delivery fees, support details, and payment labels.</p>
-        </div>
+      <div className="admin-section-header">
+        <h2>Settings</h2>
         <button className="admin-primary-action" type="button" onClick={saveSettings}>Save Settings</button>
       </div>
       {message && <p>{message}</p>}
@@ -47,6 +44,12 @@ const AdminSettings = () => {
             Phone number
             <input value={settings.phone || ''} onChange={(event) => updateSetting('phone', event.target.value)} />
           </label>
+          <label>Order notification email<input value={settings.orderNotificationEmail || ''} onChange={(event) => updateSetting('orderNotificationEmail', event.target.value)} /></label>
+          <label>WhatsApp URL<input value={settings.whatsappUrl || ''} onChange={(event) => updateSetting('whatsappUrl', event.target.value)} /></label>
+          <label>Address<textarea value={settings.address || ''} onChange={(event) => updateSetting('address', event.target.value)} /></label>
+          <label>Currency<input value={settings.currency || ''} onChange={(event) => updateSetting('currency', event.target.value)} /></label>
+          <label>Announcement bar<input value={settings.announcement || ''} onChange={(event) => updateSetting('announcement', event.target.value)} /></label>
+          <label>Footer description<textarea value={settings.footerDescription || ''} onChange={(event) => updateSetting('footerDescription', event.target.value)} /></label>
         </article>
 
         <article className="admin-panel">

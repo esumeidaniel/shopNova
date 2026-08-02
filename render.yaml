@@ -4,14 +4,14 @@ services:
     env: node
     plan: free
     rootDir: backend
-    buildCommand: npm install
+    buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
       - key: CLIENT_URL
-        value: https://esumeidaniel.github.io
+        sync: false
       - key: JWT_SECRET
         sync: false
       - key: MONGODB_URI
@@ -22,3 +22,21 @@ services:
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_SECURE
+        value: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: REQUIRE_EMAIL_VERIFICATION
+        value: true
+      - key: ALLOW_SEED_ACCOUNTS
+        value: false

@@ -5,6 +5,10 @@
   padding: 34px 0 72px;
 }
 
+.trust-page.contact-page {
+  padding-top: 24px;
+}
+
 .trust-hero,
 .trust-card-grid,
 .contact-support-panel,
@@ -53,13 +57,34 @@
 .contact-support-panel {
   align-items: start;
   display: grid;
-  gap: 24px;
-  grid-template-columns: 0.9fr 1.1fr;
+  gap: 22px;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(420px, 1.05fr);
 }
 
 .contact-methods {
   display: grid;
-  gap: 14px;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.contact-intro {
+  grid-column: 1 / -1;
+  margin-bottom: 2px;
+}
+
+.contact-intro h1 {
+  font-size: clamp(2rem, 3vw, 2.7rem);
+  line-height: 1.08;
+  margin: 0 0 8px;
+}
+
+.contact-intro p {
+  color: var(--muted, #71809a);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.45;
+  margin: 0;
+  max-width: 620px;
 }
 
 .trust-card-grid article,
@@ -78,13 +103,20 @@
 }
 
 .contact-methods article {
-  padding: 24px;
+  min-height: 112px;
+  padding: 16px;
 }
 
 .contact-form {
   display: grid;
-  gap: 14px;
-  padding: 24px;
+  align-self: start;
+  gap: 12px;
+  padding: 22px;
+}
+
+.contact-form h2 {
+  font-size: 1.45rem;
+  margin: 0 0 4px;
 }
 
 .contact-form input,
@@ -92,9 +124,16 @@
   border: 1px solid var(--line, #e5eaf2);
   border-radius: 8px;
   color: var(--navy-deep, #071c46);
+  font: inherit;
+  min-height: 46px;
   outline: 0;
-  padding: 13px 14px;
+  padding: 0 14px;
   resize: vertical;
+}
+
+.contact-form textarea {
+  min-height: 118px;
+  padding-block: 12px;
 }
 
 .contact-form button {
@@ -104,20 +143,49 @@
   color: #071c46;
   font-weight: 900;
   min-height: 44px;
+  padding: 0 18px;
+}
+
+.contact-status {
+  border-radius: 8px;
+  font-weight: 800;
+  margin: 0;
+  padding: 12px;
+}
+
+.contact-status.success {
+  background: #e7f8ef;
+  color: #12834d;
+}
+
+.contact-status.error {
+  background: #ffe6e6;
+  color: #d32f2f;
 }
 
 .trust-card-grid h2,
-.trust-cta h2 {
+.trust-cta h2,
+.contact-methods h2 {
   font-size: 24px;
   margin: 0 0 12px;
 }
 
 .trust-card-grid p,
-.trust-cta p {
+.trust-cta p,
+.contact-methods p {
   color: var(--muted, #71809a);
   font-weight: 700;
   line-height: 1.45;
   margin: 0;
+}
+
+.contact-methods h2 {
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.contact-methods p {
+  font-size: 0.95rem;
 }
 
 .trust-cta {
@@ -128,6 +196,11 @@
 .trust-faq {
   margin-top: 28px;
   padding: 34px;
+}
+
+.contact-page .trust-faq {
+  margin-top: 22px;
+  padding: 26px;
 }
 
 .trust-faq h2 {
@@ -172,6 +245,14 @@
   .trust-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .contact-support-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-methods {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 680px) {
@@ -198,6 +279,9 @@
 
   .contact-support-panel {
     gap: 16px;
+  }
+
+  .contact-methods {
     grid-template-columns: 1fr;
   }
 
@@ -212,6 +296,14 @@
   .contact-methods h2,
   .trust-faq h2 {
     font-size: 19px;
+  }
+
+  .contact-intro h1 {
+    font-size: 30px;
+  }
+
+  .contact-form textarea {
+    min-height: 106px;
   }
 
   .trust-faq {

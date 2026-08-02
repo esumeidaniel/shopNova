@@ -12,5 +12,8 @@ export function hasRealDiscount(product) {
 }
 
 export function visibleProducts(products = []) {
-  return products.filter((product) => !isTestProduct(product))
+  return products.filter((product) => {
+    const status = String(product?.status || 'Active').toLowerCase()
+    return !isTestProduct(product) && !['draft', 'inactive', 'disabled'].includes(status)
+  })
 }
