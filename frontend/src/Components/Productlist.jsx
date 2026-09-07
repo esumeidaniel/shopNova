@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { api } from '../api'
+import { api, resolveMediaUrl } from '../api'
 import { fallbackCategories, fallbackProducts, getProductImage } from '../productData'
 import { hasRealDiscount, visibleProducts as filterVisibleProducts } from '../productDisplay'
 import { useAuth } from '../useAuth'
@@ -35,7 +35,7 @@ function ListingCard({ product, onToast }) {
     return (
         <article className="pl-card" onClick={openProduct}>
             <div className="pl-card-media">
-                <img src={product.image || getProductImage(product.name)} alt={product.name} />
+                <img src={resolveMediaUrl(product.image || getProductImage(product.name))} alt={product.name} />
                 <div className="pl-badges">
                     {showDiscount && <span>{product.discount}</span>}
                     {product.featured && <span>NEW</span>}
@@ -45,7 +45,7 @@ function ListingCard({ product, onToast }) {
 
             <div className="pl-card-body">
                 <h3>{product.name}</h3>
-                <p className="pl-rating">★ 4.7 (128)</p>
+                <p className="pl-rating">★ {product.rating || 4.7} ({product.reviewCount || 128})</p>
                 <div className="pl-price-row">
                     <strong>{product.price}</strong>
                     {showDiscount && <span>{product.oldPrice}</span>}
@@ -143,6 +143,16 @@ const Productlist = () => {
                             {category.name}
                         </Link>
                     ))}
+                    <label>
+                        Sort
+                        <select value={selectedSort} onChange={(event) => updateFilters({ sort: event.target.value })}>
+                            <option value="newest">Newest</option>
+                            <option value="popular">Popular</option>
+                            <option value="price-low">Price: low to high</option>
+                            <option value="price-high">Price: high to low</option>
+                        </select>
+                    </label>
+                    <label className="pl-checkbox"><input checked={selectedInStock} type="checkbox" onChange={(event) => updateFilters({ inStock: event.target.checked ? 'true' : '' })} /> In stock only</label>
                 </div>
             </div>
 

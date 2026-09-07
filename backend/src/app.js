@@ -48,6 +48,7 @@ app.use(cors({
 }))
 app.use(express.json({ limit: '8mb' }))
 app.use('/uploads', express.static(join(process.cwd(), 'uploads')))
+app.use('/catalog', express.static(join(process.cwd(), 'src', 'assets', 'catalog')))
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, service: 'SHOPNOVA API', database: mongoStatus() })

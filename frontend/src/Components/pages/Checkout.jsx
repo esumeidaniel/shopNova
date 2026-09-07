@@ -18,6 +18,7 @@ const Checkout = () => {
     const [paymentMethods, setPaymentMethods] = useState(['Pay on Delivery'])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
+    const [summaryOpen, setSummaryOpen] = useState(false)
     const selectedAddress = useMemo(() => addresses.find((address) => address.id === selectedAddressId), [addresses, selectedAddressId])
 
     useEffect(() => {
@@ -181,6 +182,10 @@ const Checkout = () => {
                 </div>
 
                 <aside className="checkout-side">
+                    {cartItems.length > 0 && <section className={`checkout-mobile-summary ${summaryOpen ? 'open' : ''}`}>
+                        <button type="button" aria-expanded={summaryOpen} onClick={() => setSummaryOpen((open) => !open)}>View order summary <span>{summaryOpen ? '⌃' : '⌄'}</span></button>
+                        {summaryOpen && <p>{cartSummary.count} item(s) · {cartSummary.formattedTotal}</p>}
+                    </section>}
                     <section>
                         <h2>Payment Method</h2>
                         <div className="payment-methods">

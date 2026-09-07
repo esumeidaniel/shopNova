@@ -1,6 +1,5 @@
 import { getDb, saveDb } from '../../shared/db.js'
 import { moneyToNumber, slugify } from '../../shared/helpers.js'
-import { deleteCloudinaryImage } from '../../config/cloudinary.js'
 import { validateProduct } from '../../shared/validation.js'
 
 function filterProducts(products, query) {
@@ -44,6 +43,10 @@ function uniqueProductId(products, name) {
   return id
 }
 
+function hasImageInUse(products, image, excludedId = '') {
+  return image && products.some((product) => product.id !== excludedId && product.image === image)
+}
+
 function makeProduct(body, products = []) {
   const name = body.name?.trim()
   const stock = Number(body.stock || 0)
@@ -62,7 +65,6 @@ function makeProduct(body, products = []) {
     status,
     description: body.description || `${name} from the SHOPNOVA electronics catalog.`,
     image: body.image || '',
-    imagePublicId: body.imagePublicId || '',
     images: body.images || (body.image ? [body.image] : []),
     featured: Boolean(body.featured),
     bestSeller: Boolean(body.bestSeller),
@@ -72,7 +74,7 @@ function makeProduct(body, products = []) {
 
 export async function listProducts(req, res) {
   const db = await getDb()
-  const publicProducts = db.products.filter((product) => ['Active', 'Published'].includes(product.status))
+  const publicProducts = db.products.filter((product) => ['Active', 'Published', 'Out of Stock'].includes(product.status))
   res.json({ products: filterProducts(publicProducts, req.query) })
 }
 
@@ -90,13 +92,17 @@ export async function getProduct(req, res) {
   const db = await getDb()
   const product = db.products.find((item) => item.id === req.params.id)
 
-  if (!product || !['Active', 'Published'].includes(product.status)) return res.status(404).json({ message: 'Product not found' })
+  if (!product || !['Active', 'Published', 'Out of Stock'].includes(product.status)) return res.status(404).json({ message: 'Product not found' })
   return res.json({ product })
 }
 
 export async function createProduct(req, res) {
   const validationError = validateProduct(req.body)
   if (validationError) return res.status(400).json({ message: validationError })
+
+  if (hasImageInUse(req.db.products, req.body.image)) {
+    return res.status(400).json({ message: 'Each catalog product must use its own image.' })
+  }
 
   const product = makeProduct(req.body, req.db.products)
   if (req.db.products.some((item) => item.id === product.id)) {
@@ -114,15 +120,13 @@ export async function updateProduct(req, res) {
   if (index === -1) return res.status(404).json({ message: 'Product not found' })
 
   const currentProduct = req.db.products[index]
-  const imageIsChanging = req.body.imagePublicId && req.body.imagePublicId !== currentProduct.imagePublicId
-
-  if (imageIsChanging && currentProduct.imagePublicId) {
-    await deleteCloudinaryImage(currentProduct.imagePublicId)
-  }
-
   const nextProduct = { ...currentProduct, ...req.body, id: req.params.id }
   const validationError = validateProduct(nextProduct)
   if (validationError) return res.status(400).json({ message: validationError })
+
+  if (hasImageInUse(req.db.products, nextProduct.image, req.params.id)) {
+    return res.status(400).json({ message: 'Each catalog product must use its own image.' })
+  }
 
   nextProduct.stock = Number(nextProduct.stock || 0)
   nextProduct.status = nextProduct.stock <= 0 ? 'Out of Stock' : (req.body.status || currentProduct.status || 'Active')
@@ -134,10 +138,6 @@ export async function updateProduct(req, res) {
 export async function deleteProduct(req, res) {
   const product = req.db.products.find((item) => item.id === req.params.id)
   if (!product) return res.status(404).json({ message: 'Product not found' })
-
-  if (product.imagePublicId) {
-    await deleteCloudinaryImage(product.imagePublicId)
-  }
 
   req.db.products = req.db.products.filter((item) => item.id !== req.params.id)
   await saveDb(req.db)

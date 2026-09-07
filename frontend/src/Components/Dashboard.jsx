@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { api } from '../api';
+import { api, resolveMediaUrl } from '../api';
 import heroProducts from '../assets/shopnova-hero-products.png';
 import { fallbackCategories, fallbackProducts, getProductImage } from '../productData';
 import { hasRealDiscount, visibleProducts } from '../productDisplay';
@@ -29,10 +29,12 @@ function ProductCard({ product, onToast }) {
   return (
     <article className="product-card" onClick={() => navigate(`/product/${product.id}`)}>
       <div className="product-media">
-        <img src={product.image || getProductImage(product.name)} alt={product.name} />
+        <img src={resolveMediaUrl(product.image || getProductImage(product.name))} alt={product.name} />
         <div className="badge-row">
           {showDiscount && <span className="discount-badge">{product.discount}</span>}
           {product.featured && <span className="new-badge">NEW</span>}
+          {product.bestSeller && <span className="best-seller-badge">BEST SELLER</span>}
+          {!inStock && <span className="out-of-stock-badge">OUT OF STOCK</span>}
         </div>
         <button className="wishlist-btn" aria-label={`Add ${product.name} to wishlist`} onClick={(event) => {
           event.stopPropagation();
@@ -48,7 +50,7 @@ function ProductCard({ product, onToast }) {
       </div>
       <div className="product-info">
         <h3>{product.name}</h3>
-        <p className="rating">★ 4.7 (128)</p>
+        <p className="rating">★ {product.rating || 4.7} ({product.reviewCount || 128})</p>
         <div className="price-row">
           <strong>{product.price}</strong>
           {showDiscount && <span>{product.oldPrice}</span>}
@@ -91,6 +93,7 @@ const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [homeError, setHomeError] = useState('');
   const [settings, setSettings] = useState({});
+  const [showAllCategories, setShowAllCategories] = useState(false);
   const featuredProducts = products.filter((product) => product.featured).slice(0, 8);
   const displayedFeatured = featuredProducts.length > 0 ? featuredProducts : products.slice(0, 8);
   const bestSellerProducts = products.filter((product) => product.bestSeller).slice(0, 4);
@@ -149,7 +152,7 @@ const Dashboard = () => {
           </div>
         </div>
         {homeError && <p className="section-error">{homeError}</p>}
-        <div className="category-grid">
+        <div className={`category-grid ${showAllCategories ? 'show-all' : ''}`}>
           {categories.map((category) => (
             <Link className="category-card" to={`/products?category=${encodeURIComponent(category.name)}`} id={category.name.toLowerCase()} key={category.name}>
               <span>{categoryIcons[category.name] || '▣'}</span>
@@ -160,6 +163,9 @@ const Dashboard = () => {
             </Link>
           ))}
         </div>
+        {categories.length > 4 && <button className="category-more-button" type="button" onClick={() => setShowAllCategories((value) => !value)}>
+          {showAllCategories ? 'Show fewer categories' : 'See all categories'}
+        </button>}
         </section>
       )}
 

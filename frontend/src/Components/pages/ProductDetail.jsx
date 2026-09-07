@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { api } from '../../api'
+import { api, resolveMediaUrl } from '../../api'
 import { emptyProduct, fallbackProducts, getProductById, getProductImage } from '../../productData'
 import { hasRealDiscount, visibleProducts } from '../../productDisplay'
 import { useAuth } from '../../useAuth'
@@ -69,7 +69,7 @@ function RelatedCard({ product, onToast }) {
     return (
         <article className="pd-card">
             <div className="pd-card-media">
-                {product.image && <img src={product.image || getProductImage(product.name)} alt={product.name} />}
+                {product.image && <img src={resolveMediaUrl(product.image || getProductImage(product.name))} alt={product.name} />}
                 {showDiscount && <span>{product.discount}</span>}
                 <button aria-label={`Save ${product.name} to wishlist`} onClick={() => {
                     if (!isLoggedIn) {
@@ -109,6 +109,7 @@ const ProductDetail = () => {
     const galleryImages = product.images?.length ? product.images : [product.image].filter(Boolean)
     const [selectedImage, setSelectedImage] = useState(product.image)
     const [quantity, setQuantity] = useState(1)
+    const [mobileDetailsOpen, setMobileDetailsOpen] = useState('')
     const [selectedOptions, setSelectedOptions] = useState(() => Object.fromEntries(
         optionGroups.map(([label, options]) => [label, options[1] || options[0]]),
     ))
@@ -194,13 +195,13 @@ const ProductDetail = () => {
             <section className="pd-main">
                 <div className="pd-gallery">
                     <div className="pd-image">
-                        {selectedImage && <img src={selectedImage} alt={product.name} />}
+                        {selectedImage && <img src={resolveMediaUrl(selectedImage)} alt={product.name} />}
                     </div>
                     {galleryImages.length > 0 && (
                         <div className="pd-thumbs">
                             {galleryImages.map((image, index) => (
                                 <button className={selectedImage === image ? 'active' : ''} key={`${image}-${index}`} type="button" onClick={() => setSelectedImage(image)}>
-                                    <img src={image} alt="" />
+                                    <img src={resolveMediaUrl(image)} alt="" />
                                 </button>
                             ))}
                         </div>
@@ -263,7 +264,7 @@ const ProductDetail = () => {
                 </div>
             </section>
 
-            <section className="pd-details-panel">
+            <section className="pd-details-panel pd-desktop-details">
                 <div className="pd-tabs">
                     <button>Description</button>
                     <button>Specifications</button>
@@ -279,6 +280,17 @@ const ProductDetail = () => {
                     <h3>Customer Reviews</h3>
                     <p>Reviews will appear here after customers start buying this product.</p>
                 </div>
+            </section>
+
+            <section className="pd-mobile-details" aria-label="Product information">
+                {[
+                    ['description', 'Description', <p key="description">{product.name} ships from the SHOPNOVA catalog with secure checkout, fast delivery, and customer support.</p>],
+                    ['specifications', 'Specifications', <p key="specifications">{specs.map((spec) => <span key={spec}>{spec}<br /></span>)}</p>],
+                    ['reviews', 'Customer Reviews', <p key="reviews">Reviews will appear here after customers start buying this product.</p>],
+                ].map(([key, title, content]) => <article key={key} className={mobileDetailsOpen === key ? 'open' : ''}>
+                    <button type="button" aria-expanded={mobileDetailsOpen === key} onClick={() => setMobileDetailsOpen((open) => open === key ? '' : key)}>{title}<span>⌄</span></button>
+                    {mobileDetailsOpen === key && <div>{content}</div>}
+                </article>)}
             </section>
 
             {relatedProducts.length > 0 && (

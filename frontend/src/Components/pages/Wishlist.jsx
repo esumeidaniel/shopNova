@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useStore } from '../../useStore'
+import { resolveMediaUrl } from '../../api'
 import { hasRealDiscount, visibleProducts } from '../../productDisplay'
 import './Wishlist.css'
 
@@ -10,7 +11,7 @@ function WishlistCard({ item }) {
     return (
         <article className="wishlist-card">
             <div className="wishlist-media">
-                <img src={item.image} alt={item.name} />
+                <img src={resolveMediaUrl(item.image)} alt={item.name} />
                 <div>
                     {showDiscount && <span>{item.discount}</span>}
                 </div>

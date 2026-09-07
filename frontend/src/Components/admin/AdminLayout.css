@@ -827,3 +827,23 @@
     flex-direction: column;
   }
 }
+
+@media (max-width: 480px) {
+  .admin-sidebar { padding: 8px; }
+  .admin-brand { font-size: 16px; padding: 8px; }
+  .admin-nav { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 3px; }
+  .admin-nav a { flex: 0 0 auto; font-size: 11px; min-height: 34px; padding: 8px 10px; }
+  .admin-store-link { display: none; }
+  .admin-main { padding: 12px 10px 28px; }
+  .admin-section-header h2 { font-size: 20px; }
+  .admin-section-header p { font-size: 12px; }
+  .admin-panel, .admin-stat-card, .admin-category-card { border-radius: 8px; padding: 12px; }
+  .admin-stats-grid, .admin-card-grid { gap: 8px; }
+  .admin-stat-card strong { font-size: 22px; }
+  .admin-table-wrap { -webkit-overflow-scrolling: touch; border-radius: 7px; }
+  .admin-table { min-width: 640px; }
+  .admin-table th, .admin-table td { font-size: 11px; padding: 10px 8px; }
+  .admin-image-upload, .admin-image-upload img { min-height: 150px; }
+  .admin-product-fields { gap: 10px; }
+  .admin-product-fields input, .admin-product-fields select, .admin-product-fields textarea, .admin-compact-form input, .admin-compact-form select, .admin-compact-form textarea { min-height: 38px; font-size: 12px; padding: 0 10px; }
+}

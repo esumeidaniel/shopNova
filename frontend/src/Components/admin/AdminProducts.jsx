@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { api } from '../../api'
+import { api, resolveMediaUrl } from '../../api'
 import { AdminToast, ConfirmModal, FormModal } from './AdminUi'
 
 const emptyProduct = {
@@ -13,7 +13,6 @@ const emptyProduct = {
   status: 'Active',
   description: '',
   image: '',
-  imagePublicId: '',
   featured: false,
   bestSeller: false,
 }
@@ -24,7 +23,7 @@ function ProductForm({ product, categories, imageName, saving, uploading, onChan
       <label className="admin-image-upload">
         <input type="file" accept="image/*" onChange={onImageChange} disabled={uploading} />
         {product.image ? (
-          <img src={product.image} alt="Selected product preview" />
+          <img src={resolveMediaUrl(product.image)} alt="Selected product preview" />
         ) : (
           <span>
             <strong>{uploading ? 'Uploading image...' : 'Upload product image'}</strong>
@@ -163,7 +162,6 @@ const AdminProducts = () => {
       status: product.status || 'Active',
       description: product.description || '',
       image: product.image || '',
-      imagePublicId: product.imagePublicId || '',
       featured: Boolean(product.featured),
       bestSeller: Boolean(product.bestSeller),
     })
@@ -184,8 +182,8 @@ const AdminProducts = () => {
     formData.append('image', file)
 
     try {
-      const { image, publicId } = await api.uploadProductImage(formData)
-      setFormProduct((product) => ({ ...product, image, imagePublicId: publicId }))
+      const { image } = await api.uploadProductImage(formData)
+      setFormProduct((product) => ({ ...product, image }))
       showToast('Image uploaded')
     } catch (error) {
       showToast(error.message, 'error')
@@ -277,7 +275,7 @@ const AdminProducts = () => {
                   <tr key={product.id}>
                     <td>
                       <div className="admin-product-cell">
-                        {product.image ? <img src={product.image} alt={product.name} /> : <span />}
+                        {product.image ? <img src={resolveMediaUrl(product.image)} alt={product.name} /> : <span />}
                         <strong>{product.name}</strong>
                       </div>
                     </td>

@@ -1,8 +1,14 @@
 const explicitApiUrl = import.meta.env.VITE_API_URL
-export const API_BASE_URL = explicitApiUrl || (import.meta.env.DEV ? 'http://127.0.0.1:4000/api' : '')
+export const API_BASE_URL = explicitApiUrl || (import.meta.env.DEV ? '/api' : '')
 const TOKEN_KEY = 'shopnova-token'
 const USER_KEY = 'shopnova-user'
 const localPreviewHosts = new Set(['localhost', '127.0.0.1', ''])
+
+export function resolveMediaUrl(path = '') {
+  if (!path || /^(https?:)?\/\//.test(path) || path.startsWith('data:')) return path
+  const origin = API_BASE_URL.replace(/\/api\/?$/, '')
+  return origin ? `${origin}${path.startsWith('/') ? path : `/${path}`}` : path
+}
 
 export const allowDemoFallback = import.meta.env.VITE_ENABLE_DEMO_FALLBACK === 'true'
   && localPreviewHosts.has(window.location.hostname)

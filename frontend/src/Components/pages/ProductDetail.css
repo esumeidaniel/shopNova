@@ -543,6 +543,8 @@
   width: 100%;
 }
 
+.pd-mobile-details { display: none; }
+
 @media (max-width: 1100px) {
   .pd-header,
   .pd-main {
@@ -639,4 +641,27 @@
   .pd-option-group div {
     flex-wrap: wrap;
   }
+}
+
+@media (max-width: 480px) {
+  .product-detail { padding: 14px 0 32px; }
+  .pd-page-heading, .pd-breadcrumb { display: none; }
+  .pd-main, .pd-related, .pd-mobile-details { width: calc(100% - 24px); }
+  .pd-main { gap: 14px; }
+  .pd-gallery { padding: 10px; }
+  .pd-image { height: 220px; }
+  .pd-info { padding: 14px; }
+  .pd-info h2 { font-size: 18px; line-height: 1.2; }
+  .pd-price-row strong { font-size: 22px; }
+  .pd-option-group { margin-top: 12px; }
+  .pd-option-group h3, .pd-quantity h3 { font-size: 12px; }
+  .pd-option-group button { font-size: 11px; min-height: 30px; padding: 0 8px; }
+  .pd-purchase-actions { gap: 8px; }
+  .pd-purchase-actions button { font-size: 12px; min-height: 38px; }
+  .pd-desktop-details { display: none; }
+  .pd-mobile-details { display: grid; gap: 8px; margin: 14px auto; }
+  .pd-mobile-details article { background: #fff; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .pd-mobile-details button { align-items: center; background: #fff; border: 0; color: var(--navy-deep); display: flex; font-weight: 900; justify-content: space-between; min-height: 42px; padding: 0 12px; width: 100%; }
+  .pd-mobile-details article > div { border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; line-height: 1.45; padding: 10px 12px; }
+  .pd-related-grid { gap: 10px; }
 }

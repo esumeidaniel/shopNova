@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import { api } from '../../api'
+import { api, resolveMediaUrl } from '../../api'
 import { useStore } from '../../useStore'
 import './Cart.css'
 
@@ -11,7 +11,7 @@ function CartItem({ item }) {
     return (
         <article className="cart-item">
             <div className="cart-item-image">
-                <img src={item.image} alt={item.name} />
+                <img src={resolveMediaUrl(item.image)} alt={item.name} />
             </div>
             <div>
                 <h2>{item.name}</h2>
@@ -33,6 +33,7 @@ const Cart = () => {
     const [couponCode, setCouponCode] = useState('')
     const [couponMessage, setCouponMessage] = useState('')
     const [couponLoading, setCouponLoading] = useState(false)
+    const [summaryOpen, setSummaryOpen] = useState(false)
     const applyCoupon = async (event) => {
         event.preventDefault()
         setCouponLoading(true)
@@ -80,7 +81,8 @@ const Cart = () => {
 
                 {cartItems.length > 0 && (
                     <aside className="cart-side">
-                        <section className="order-summary">
+                        <section className={`order-summary ${summaryOpen ? 'open' : ''}`}>
+                            <button className="mobile-summary-toggle" type="button" aria-expanded={summaryOpen} onClick={() => setSummaryOpen((open) => !open)}>View order summary <span>{summaryOpen ? '⌃' : '⌄'}</span></button>
                             <h2>Order Summary</h2>
                             <dl>
                                 <div>
