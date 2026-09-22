@@ -22,7 +22,7 @@ function seededProduct(name, brand, category, price, imageType, options = {}) {
     oldPrice: options.oldPrice || '', discount: options.discount || '', stock,
     featured: Boolean(options.featured), bestSeller: Boolean(options.bestSeller),
     status: stock > 0 ? 'Active' : 'Out of Stock',
-    description: options.description || `${name} from the SHOPNOVA electronics collection.`,
+    description: options.description || `${name} from the ZANDEER electronics collection.`,
     priceSource: options.priceSource || 'Jumia Nigeria reference listing; seed price checked September 2026 and is not a live feed.',
     sourceUrl: options.sourceUrl || '',
     rating: options.rating || 4.6, reviewCount: options.reviewCount || 24,
@@ -34,10 +34,10 @@ export const initialData = {
   users: [
     {
       id: 'user_admin',
-      email: 'admin@shopnova.ng',
+      email: 'admin@zandeer.ng',
       password: '$2a$10$daBMtAW3krm.pyi8jnALn.qp6Puat1D.J829EZm/KoZqe8IJfgXM6',
       role: 'admin',
-      firstName: 'SHOPNOVA',
+      firstName: 'ZANDEER',
       lastName: 'Admin',
       phone: '+234 801 000 0000',
       emailVerified: true,
@@ -115,8 +115,8 @@ export const initialData = {
   coupons: [],
   messages: [],
   settings: {
-    storeName: 'SHOPNOVA',
-    supportEmail: 'support@shopnova.ng',
+    storeName: 'ZANDEER',
+    supportEmail: 'support@zandeer.ng',
     phone: '+234 801 000 0000',
     standardDelivery: 'Free',
     expressDelivery: '₦2,500',

@@ -209,7 +209,7 @@ const Profile = ({ section = 'profile' }) => {
                     <section className="notification-card">
                         <h2>Need help?</h2>
                         <div>
-                            <p>Contact SHOPNOVA support for order, delivery, and warranty questions.</p>
+                            <p>Contact ZANDEER support for order, delivery, and warranty questions.</p>
                             <Link to="/contact">Contact Support</Link>
                         </div>
                     </section>

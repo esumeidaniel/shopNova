@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: shopnova-backend
+    name: zandeer-backend
     env: node
     plan: free
     rootDir: backend

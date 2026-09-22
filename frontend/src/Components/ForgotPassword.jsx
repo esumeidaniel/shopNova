@@ -17,7 +17,7 @@ const ForgotPassword = () => {
             <section className="forgot-card" aria-labelledby="forgot-title">
                 <div className="forgot-brand">
                     <span>S</span>
-                    <strong>SHOPNOVA</strong>
+                    <strong>ZANDEER</strong>
                 </div>
 
                 <div className="forgot-heading">

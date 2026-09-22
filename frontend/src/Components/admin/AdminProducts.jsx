@@ -4,7 +4,7 @@ import { AdminToast, ConfirmModal, FormModal } from './AdminUi'
 
 const emptyProduct = {
   name: '',
-  brand: 'SHOPNOVA',
+  brand: 'ZANDEER',
   category: '',
   price: '',
   oldPrice: '',
@@ -153,7 +153,7 @@ const AdminProducts = () => {
     setImageName('')
     setFormProduct({
       name: product.name || '',
-      brand: product.brand || 'SHOPNOVA',
+      brand: product.brand || 'ZANDEER',
       category: product.category || '',
       price: product.price || '',
       oldPrice: product.oldPrice || '',
@@ -253,7 +253,7 @@ const AdminProducts = () => {
         {!loading && products.length === 0 && (
           <div className="admin-empty-state">
             <h3>No products yet</h3>
-            <p>Add your first product to start selling on SHOPNOVA.</p>
+            <p>Add your first product to start selling on ZANDEER.</p>
 
           </div>
         )}

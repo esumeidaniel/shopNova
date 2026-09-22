@@ -5,23 +5,23 @@ import './TrustPage.css'
 
 const pageContent = {
   about: {
-    title: 'About SHOPNOVA',
-    intro: 'SHOPNOVA is a single-vendor electronics store focused on reliable phones, laptops, accessories, audio devices, smart TVs and everyday tech.',
+    title: 'About ZANDEER',
+    intro: 'ZANDEER is a single-vendor electronics store focused on reliable phones, laptops, accessories, audio devices, smart TVs and everyday tech.',
     cards: [
       ['Curated electronics', 'Products are selected around practical customer needs: work, school, gaming, charging, entertainment and mobile life.'],
-      ['One store, clear support', 'Customers buy directly from SHOPNOVA, so support, warranty conversations and delivery updates stay simple.'],
+      ['One store, clear support', 'Customers buy directly from ZANDEER, so support, warranty conversations and delivery updates stay simple.'],
       ['Built for trust', 'The storefront is designed around product clarity, simple navigation and transparent customer service information.'],
     ],
     faqs: [
-      ['What does SHOPNOVA sell?', 'SHOPNOVA focuses on phones, laptops, chargers, accessories, audio devices, smart TVs and everyday electronics.'],
-      ['Is SHOPNOVA a marketplace?', 'No. The storefront is structured as a single-vendor electronics store.'],
+      ['What does ZANDEER sell?', 'ZANDEER focuses on phones, laptops, chargers, accessories, audio devices, smart TVs and everyday electronics.'],
+      ['Is ZANDEER a marketplace?', 'No. The storefront is structured as a single-vendor electronics store.'],
     ],
   },
   contact: {
     title: 'Contact Us',
-    intro: 'Need help choosing a device, tracking an order or asking about warranty? Reach the SHOPNOVA support team.',
+    intro: 'Need help choosing a device, tracking an order or asking about warranty? Reach the ZANDEER support team.',
     cards: [
-      ['Email', 'support@shopnova.ng'],
+      ['Email', 'support@zandeer.ng'],
       ['Phone', '+234 801 000 0000'],
       ['WhatsApp', '+234 801 000 0000'],
       ['Location', 'Lagos, Nigeria'],
@@ -47,7 +47,7 @@ const pageContent = {
   },
   returns: {
     title: 'Returns & Warranty',
-    intro: 'SHOPNOVA should make post-purchase support clear before the customer checks out.',
+    intro: 'ZANDEER should make post-purchase support clear before the customer checks out.',
     cards: [
       ['Return window', 'Eligible products can be returned within the stated return period if they meet return conditions.'],
       ['Warranty support', 'Warranty information should be shown on product pages and confirmed after purchase.'],

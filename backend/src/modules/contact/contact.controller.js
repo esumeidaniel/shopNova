@@ -21,10 +21,10 @@ export async function submitContact(req, res) {
   await saveDb(req.db)
 
   await sendEmail({
-    to: req.db.settings?.supportEmail || 'support@shopnova.ng',
-    subject: `SHOPNOVA support message${message.orderId ? ` for ${message.orderId}` : ''}`,
+    to: req.db.settings?.supportEmail || 'support@zandeer.ng',
+    subject: `ZANDEER support message${message.orderId ? ` for ${message.orderId}` : ''}`,
     text: `${message.name} <${message.email}> wrote:\n\n${message.message}`,
   }).catch(() => {})
 
-  return res.status(201).json({ message: 'Message sent. SHOPNOVA support will respond soon.' })
+  return res.status(201).json({ message: 'Message sent. ZANDEER support will respond soon.' })
 }

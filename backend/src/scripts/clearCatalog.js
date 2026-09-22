@@ -18,6 +18,6 @@ db.users = (db.users || [])
 
 await saveDb(db)
 
-console.log('SHOPNOVA store reset. Products, categories, customers, orders, coupons, messages, carts, and wishlists are now empty. Admin users were kept.')
+console.log('ZANDEER store reset. Products, categories, customers, orders, coupons, messages, carts, and wishlists are now empty. Admin users were kept.')
 
 await mongoose.disconnect()

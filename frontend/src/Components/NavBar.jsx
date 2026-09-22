@@ -26,7 +26,7 @@ const NavBar = () => {
         .map((part) => part.charAt(0).toUpperCase())
         .join('') || 'C'
     const getPageLabel = () => {
-        if (location.pathname === '/') return 'SHOPNOVA'
+        if (location.pathname === '/') return 'ZANDEER'
         if (location.pathname.startsWith('/products')) return 'Categories'
         if (location.pathname.startsWith('/product/')) return 'Product'
         if (location.pathname.startsWith('/cart')) return 'Cart'
@@ -38,7 +38,7 @@ const NavBar = () => {
         if (location.pathname.startsWith('/about')) return 'About'
         if (location.pathname.startsWith('/delivery')) return 'Delivery'
         if (location.pathname.startsWith('/returns')) return 'Returns'
-        return 'SHOPNOVA'
+        return 'ZANDEER'
     }
 
     const handleLogout = () => {
@@ -74,8 +74,8 @@ const NavBar = () => {
             {showAnnouncement && publicSettings.announcement && <div className="announcement-bar">{publicSettings.announcement}</div>}
             <div className="site-header">
                 <Link className="brand" to="/">
-                    <span className="brand-mark">S</span>
-                    <span className="brand-title desktop-brand-title">{publicSettings.storeName || 'SHOPNOVA'}</span>
+                    <span className="brand-mark">Z</span>
+                    <span className="brand-title desktop-brand-title">{publicSettings.storeName || 'ZANDEER'}</span>
                     <span className="brand-title mobile-brand-title">{getPageLabel()}</span>
                 </Link>
 
@@ -84,7 +84,7 @@ const NavBar = () => {
                     const keyword = event.currentTarget.elements.search.value.trim()
                     navigate(keyword ? `/products?search=${encodeURIComponent(keyword)}` : '/products')
                 }}>
-                    <input name="search" aria-label="Search products" placeholder="Search SHOPNOVA products..." />
+                    <input name="search" aria-label="Search products" placeholder="Search ZANDEER products..." />
                     <button type="submit">Search</button>
                 </form>
 

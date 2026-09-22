@@ -6,7 +6,7 @@ export async function getPublicSettings(_req, res) {
   const settings = db.settings || {}
   res.json({
     settings: {
-      storeName: settings.storeName || 'SHOPNOVA',
+      storeName: settings.storeName || 'ZANDEER',
       logo: settings.logo || '',
       favicon: settings.favicon || '',
       supportEmail: settings.supportEmail || '',

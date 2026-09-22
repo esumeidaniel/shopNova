@@ -26,9 +26,9 @@ export function downloadInvoice(req, res) {
 
   const html = `<!doctype html>
     <html>
-      <head><meta charset="utf-8"><title>SHOPNOVA Invoice ${order.id}</title></head>
+      <head><meta charset="utf-8"><title>ZANDEER Invoice ${order.id}</title></head>
       <body style="font-family: Arial, sans-serif; color: #071c46;">
-        <h1>SHOPNOVA Invoice</h1>
+        <h1>ZANDEER Invoice</h1>
         <p><strong>Order:</strong> ${order.id}</p>
         <p><strong>Customer:</strong> ${order.customer}</p>
         <p><strong>Date:</strong> ${order.date}</p>
@@ -43,7 +43,7 @@ export function downloadInvoice(req, res) {
     </html>`
 
   res.setHeader('Content-Type', 'text/html')
-  res.setHeader('Content-Disposition', `attachment; filename="shopnova-invoice-${order.id}.html"`)
+  res.setHeader('Content-Disposition', `attachment; filename="zandeer-invoice-${order.id}.html"`)
   return res.send(html)
 }
 

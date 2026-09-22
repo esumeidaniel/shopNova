@@ -1,11 +1,11 @@
-# SHOPNOVA
+# ZANDEER
 
-SHOPNOVA is separated into a React frontend and an Express backend.
+ZANDEER is separated into a React frontend and an Express backend.
 
 ## Project Structure
 
 ```txt
-SHOPNOVA/
+ZANDEER/
   frontend/
     React + Vite customer/admin UI
 
@@ -83,7 +83,7 @@ Cloudinary product image uploads
 ## Local Test Account
 
 ```txt
-Admin: admin@shopnova.ng / password123
+Admin: admin@zandeer.ng / password123
 ```
 
 This account is for local development only. Never enable seed accounts in production.
@@ -100,9 +100,9 @@ Backend environment variables:
 ```txt
 NODE_ENV=production
 PORT=4000
-CLIENT_URL=https://your-shopnova-project.vercel.app
+CLIENT_URL=https://your-zandeer-project.vercel.app
 JWT_SECRET=replace_with_a_random_32_plus_byte_secret
-MONGODB_URI=mongodb+srv://username:password@cluster.example.mongodb.net/shopnova
+MONGODB_URI=mongodb+srv://username:password@cluster.example.mongodb.net/zandeer
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
@@ -111,7 +111,7 @@ SMTP_PORT=587
 SMTP_SECURE=false
 SMTP_USER=your_smtp_username
 SMTP_PASS=your_smtp_password
-SMTP_FROM=SHOPNOVA <no-reply@example.com>
+SMTP_FROM=ZANDEER <no-reply@example.com>
 GOOGLE_CLIENT_ID=optional_google_client_id
 GOOGLE_CLIENT_SECRET=optional_google_client_secret
 PAYSTACK_SECRET_KEY=sk_live_replace_me
@@ -197,7 +197,7 @@ POST /api/payments/paystack/verify
 
 ## Start With An Empty Catalog
 
-SHOPNOVA no longer ships customer-facing sample products. To clear old local or MongoDB sample data, run:
+ZANDEER no longer ships customer-facing sample products. To clear old local or MongoDB sample data, run:
 
 ```bash
 cd backend

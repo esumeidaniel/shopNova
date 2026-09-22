@@ -63,7 +63,7 @@ function makeProduct(body, products = []) {
     discount: body.discount || '',
     stock,
     status,
-    description: body.description || `${name} from the SHOPNOVA electronics catalog.`,
+    description: body.description || `${name} from the ZANDEER electronics catalog.`,
     image: body.image || '',
     images: body.images || (body.image ? [body.image] : []),
     featured: Boolean(body.featured),

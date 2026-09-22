@@ -1,4 +1,4 @@
-# SHOPNOVA Backend
+# ZANDEER Backend
 
 This backend is intentionally simple and easy to follow.
 
@@ -163,7 +163,7 @@ backend/.env
 Use `backend/.env.example` as the template, then add your real Cloudinary values:
 
 ```txt
-MONGODB_URI=mongodb+srv://username:password@cluster-name.xxxxx.mongodb.net/shopnova?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://username:password@cluster-name.xxxxx.mongodb.net/zandeer?retryWrites=true&w=majority
 
 CLOUDINARY_CLOUD_NAME=your_real_cloud_name
 CLOUDINARY_API_KEY=your_real_api_key
@@ -180,13 +180,13 @@ If MongoDB Atlas says it cannot connect, open Atlas:
 Network Access → Add IP Address
 ```
 
-For local testing, add your current IP address. For production deployment, add the IP or outbound access rule required by the hosting provider. Until Atlas allows the connection, SHOPNOVA falls back to the local JSON database so the backend can still run.
+For local testing, add your current IP address. For production deployment, add the IP or outbound access rule required by the hosting provider. Until Atlas allows the connection, ZANDEER falls back to the local JSON database so the backend can still run.
 
 ## Test Accounts
 
 ```txt
-Customer: customer@shopnova.ng / password123
-Admin:    admin@shopnova.ng / password123
+Customer: customer@zandeer.ng / password123
+Admin:    admin@zandeer.ng / password123
 ```
 
 ## Main Routes

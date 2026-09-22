@@ -73,7 +73,7 @@ const Cart = () => {
                     ) : (
                         <section className="empty-cart-card inline-empty">
                             <h2>Your cart is empty</h2>
-                            <p>Start shopping from the SHOPNOVA catalog.</p>
+                            <p>Start shopping from the ZANDEER catalog.</p>
                             <Link to="/products">Start Shopping</Link>
                         </section>
                     )}

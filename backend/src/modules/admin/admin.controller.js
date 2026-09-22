@@ -75,7 +75,7 @@ export function exportOrders(req, res) {
     .join('\n')
 
   res.setHeader('Content-Type', 'text/csv')
-  res.setHeader('Content-Disposition', 'attachment; filename="shopnova-orders.csv"')
+  res.setHeader('Content-Disposition', 'attachment; filename="zandeer-orders.csv"')
   return res.send(csv)
 }
 

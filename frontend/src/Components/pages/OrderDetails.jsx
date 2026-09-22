@@ -36,7 +36,7 @@ const OrderDetails = () => {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `shopnova-invoice-${id}.html`
+    link.download = `zandeer-invoice-${id}.html`
     link.click()
     URL.revokeObjectURL(url)
   }

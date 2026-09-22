@@ -29,7 +29,7 @@ const OrderSuccess = () => {
       <section className="success-card">
         <span className="success-mark">✓</span>
         <h1>Order confirmed</h1>
-        <p>Your SHOPNOVA order has been placed successfully.</p>
+        <p>Your ZANDEER order has been placed successfully.</p>
         {paymentMessage && <p>{paymentMessage}</p>}
         <div className="success-payment-note">
           <strong>Pay on Delivery</strong>
@@ -63,7 +63,7 @@ const OrderSuccess = () => {
         </div>
         <ol className="success-next-steps" aria-label="What happens next">
           <li>Order received</li>
-          <li>SHOPNOVA confirms availability</li>
+          <li>ZANDEER confirms availability</li>
           <li>Delivery is arranged</li>
           <li>You pay when the item arrives</li>
         </ol>

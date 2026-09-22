@@ -27,18 +27,18 @@ export function AuthProvider({ children }) {
   }, [token])
 
   const createDemoSession = ({ email, password, formData }) => {
-    const safeEmail = (email || formData?.email || 'customer@shopnova.ng').trim().toLowerCase()
+    const safeEmail = (email || formData?.email || 'customer@zandeer.ng').trim().toLowerCase()
 
     if (!formData && password !== 'password123') {
       throw new Error('Invalid email or password')
     }
 
-    const isAdminLogin = safeEmail === 'admin@shopnova.ng'
+    const isAdminLogin = safeEmail === 'admin@zandeer.ng'
     const demoUser = {
       id: isAdminLogin ? 'demo_admin' : 'demo_customer',
       email: safeEmail,
       role: isAdminLogin ? 'admin' : 'customer',
-      firstName: formData?.firstName || (isAdminLogin ? 'SHOPNOVA' : 'Demo'),
+      firstName: formData?.firstName || (isAdminLogin ? 'ZANDEER' : 'Demo'),
       lastName: formData?.lastName || (isAdminLogin ? 'Admin' : 'Customer'),
       phone: formData?.phone || '',
     }

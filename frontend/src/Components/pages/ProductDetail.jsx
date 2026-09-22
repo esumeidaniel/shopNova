@@ -271,7 +271,7 @@ const ProductDetail = () => {
                     <button>Reviews</button>
                     <button>Q&amp;A</button>
                 </div>
-                <p>{product.name} ships from the SHOPNOVA catalog with secure checkout, fast delivery, and customer support.</p>
+                <p>{product.name} ships from the ZANDEER catalog with secure checkout, fast delivery, and customer support.</p>
                 <div className="pd-spec-box">
                     <h3>Specifications</h3>
                     <p>{specs.map((spec) => <span key={spec}>{spec}<br /></span>)}</p>
@@ -284,7 +284,7 @@ const ProductDetail = () => {
 
             <section className="pd-mobile-details" aria-label="Product information">
                 {[
-                    ['description', 'Description', <p key="description">{product.name} ships from the SHOPNOVA catalog with secure checkout, fast delivery, and customer support.</p>],
+                    ['description', 'Description', <p key="description">{product.name} ships from the ZANDEER catalog with secure checkout, fast delivery, and customer support.</p>],
                     ['specifications', 'Specifications', <p key="specifications">{specs.map((spec) => <span key={spec}>{spec}<br /></span>)}</p>],
                     ['reviews', 'Customer Reviews', <p key="reviews">Reviews will appear here after customers start buying this product.</p>],
                 ].map(([key, title, content]) => <article key={key} className={mobileDetailsOpen === key ? 'open' : ''}>

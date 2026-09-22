@@ -16,7 +16,7 @@ const Login = () => {
             <section className="login-card" aria-labelledby="login-title">
                 <div className="login-brand">
                     <span>S</span>
-                    <strong>SHOPNOVA</strong>
+                    <strong>ZANDEER</strong>
                 </div>
 
                 <div className="login-heading">

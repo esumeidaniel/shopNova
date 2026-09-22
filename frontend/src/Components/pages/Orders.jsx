@@ -64,7 +64,7 @@ const Orders = () => {
                                 <h2>#{order.id}</h2>
                                 <div className="order-product">
                                     <span />
-                                    <strong>{order.items?.[0]?.name || 'SHOPNOVA order'}</strong>
+                                    <strong>{order.items?.[0]?.name || 'ZANDEER order'}</strong>
                                 </div>
                             </div>
                             <b className={`order-status ${order.status.toLowerCase()}`}>{order.status}</b>

@@ -33,7 +33,7 @@ const AdminLayout = () => {
       <aside className="admin-sidebar">
         <NavLink className="admin-brand" to="/admin" end>
           <span>S</span>
-          <strong>SHOPNOVA Admin</strong>
+          <strong>ZANDEER Admin</strong>
         </NavLink>
 
         <nav className="admin-nav" aria-label="Admin navigation">

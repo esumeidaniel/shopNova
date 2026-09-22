@@ -51,7 +51,7 @@ app.use('/uploads', express.static(join(process.cwd(), 'uploads')))
 app.use('/catalog', express.static(join(process.cwd(), 'src', 'assets', 'catalog')))
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, service: 'SHOPNOVA API', database: mongoStatus() })
+  res.json({ ok: true, service: 'ZANDEER API', database: mongoStatus() })
 })
 
 app.use('/api/auth', authRoutes)

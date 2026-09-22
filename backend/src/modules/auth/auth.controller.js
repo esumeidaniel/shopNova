@@ -73,8 +73,8 @@ export async function register(req, res) {
   await saveDb(db)
   const emailResult = await sendAccountEmail({
     to: user.email,
-    subject: 'Verify your SHOPNOVA account',
-    text: `Your SHOPNOVA verification code is ${user.emailVerification.code}. It expires in 15 minutes.`,
+    subject: 'Verify your ZANDEER account',
+    text: `Your ZANDEER verification code is ${user.emailVerification.code}. It expires in 15 minutes.`,
   })
 
   if (!emailResult.ok && env.requireEmailVerification) {
@@ -134,8 +134,8 @@ export async function forgotPassword(req, res) {
     await saveDb(db)
     const emailResult = await sendAccountEmail({
       to: user.email,
-      subject: 'Reset your SHOPNOVA password',
-      text: `Your SHOPNOVA password reset code is ${user.resetPassword.code}. It expires in 15 minutes.`,
+      subject: 'Reset your ZANDEER password',
+      text: `Your ZANDEER password reset code is ${user.resetPassword.code}. It expires in 15 minutes.`,
     })
 
     if (!emailResult.ok) {
@@ -195,8 +195,8 @@ export async function sendVerification(req, res) {
   await saveDb(db)
   const emailResult = await sendAccountEmail({
     to: user.email,
-    subject: 'Verify your SHOPNOVA account',
-    text: `Your SHOPNOVA verification code is ${user.emailVerification.code}. It expires in 15 minutes.`,
+    subject: 'Verify your ZANDEER account',
+    text: `Your ZANDEER verification code is ${user.emailVerification.code}. It expires in 15 minutes.`,
   })
 
   if (!emailResult.ok) {

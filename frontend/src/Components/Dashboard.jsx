@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api, resolveMediaUrl } from '../api';
-import heroProducts from '../assets/shopnova-hero-products.png';
+import heroProducts from '../assets/zandeer-hero-products.png';
 import { fallbackCategories, fallbackProducts, getProductImage } from '../productData';
 import { hasRealDiscount, visibleProducts } from '../productDisplay';
 import { useAuth } from '../useAuth';
@@ -71,7 +71,7 @@ function ProductGrid({ products, onToast }) {
     return (
       <section className="home-empty-state">
         <h3>No products here yet</h3>
-        <p>Products selected by SHOPNOVA will appear here soon.</p>
+        <p>Products selected by ZANDEER will appear here soon.</p>
         <Link to="/products">Browse Catalog</Link>
       </section>
     );
@@ -220,7 +220,7 @@ const Dashboard = () => {
 
       <section className="reviews-newsletter content-section">
         <div>
-          <h2>Customers shop SHOPNOVA for reliable gadgets.</h2>
+          <h2>Customers shop ZANDEER for reliable gadgets.</h2>
           <p>Verified reviews will appear here as real orders come in.</p>
         </div>
         <form onSubmit={(event) => {
@@ -236,14 +236,14 @@ const Dashboard = () => {
       <footer className="site-footer">
         <div className="footer-grid">
           <div>
-            <h2>{settings.storeName || 'SHOPNOVA'}</h2>
+            <h2>{settings.storeName || 'ZANDEER'}</h2>
             <p>{settings.footerDescription || ''}</p>
           </div>
           <div>
             <h3>Quick Links</h3>
             <Link to="/">Home</Link>
             <Link to="/products">Categories</Link>
-            <Link to="/about">About SHOPNOVA</Link>
+            <Link to="/about">About ZANDEER</Link>
             <Link to="/contact">Contact Us</Link>
             {isLoggedIn ? (
               <>
@@ -272,7 +272,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} {settings.storeName || 'SHOPNOVA'}. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} {settings.storeName || 'ZANDEER'}. All rights reserved.</span>
           <span>Visa&nbsp;&nbsp; Mastercard&nbsp;&nbsp; Paystack&nbsp;&nbsp; Verve</span>
         </div>
       </footer>

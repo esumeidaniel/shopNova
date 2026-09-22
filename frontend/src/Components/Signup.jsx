@@ -18,12 +18,12 @@ const Signup = () => {
             <section className="signup-card" aria-labelledby="signup-title">
                 <div className="signup-brand">
                     <span>S</span>
-                    <strong>SHOPNOVA</strong>
+                    <strong>ZANDEER</strong>
                 </div>
 
                 <div className="signup-heading">
                     <h1 id="signup-title">Create your account.</h1>
-                    <p>Join SHOPNOVA and start shopping.</p>
+                    <p>Join ZANDEER and start shopping.</p>
                 </div>
 
                 {(authError || formError) && <p className="login-alert">{authError || formError}</p>}

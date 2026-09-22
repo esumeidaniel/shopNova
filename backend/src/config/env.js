@@ -26,7 +26,7 @@ export const env = {
   smtpSecure: cleanBoolean(process.env.SMTP_SECURE),
   smtpUser: process.env.SMTP_USER || '',
   smtpPass: process.env.SMTP_PASS || '',
-  smtpFrom: process.env.SMTP_FROM || 'SHOPNOVA <no-reply@shopnova.ng>',
+  smtpFrom: process.env.SMTP_FROM || 'ZANDEER <no-reply@zandeer.ng>',
   googleClientId: process.env.GOOGLE_CLIENT_ID || '',
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
   paystackSecretKey: process.env.PAYSTACK_SECRET_KEY || '',
